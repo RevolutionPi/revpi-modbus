@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source files">
+      <UniqueIdentifier>{1072baa7-5e7f-4e43-bd59-e9abb56b7049}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header files">
+      <UniqueIdentifier>{8d944374-7c9d-4046-8c13-3dadf29f161e}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource files">
+      <UniqueIdentifier>{69042ae4-d9af-4917-81d3-d88479148a86}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Make files">
+      <UniqueIdentifier>{afe1de6d-a4de-4f7d-888f-9544bd3f1b02}</UniqueIdentifier>
+      <Extensions>*.mak</Extensions>
+    </Filter>
+    <Filter Include="VisualGDB settings">
+      <UniqueIdentifier>{46c39120-3134-438b-8b85-1e86ac50e8e2}</UniqueIdentifier>
+      <Extensions>*.vgdbsettings</Extensions>
+    </Filter>
+    <Filter Include="platform">
+      <UniqueIdentifier>{398bc84f-a16c-4f92-bd95-fad748455114}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\piControl">
+      <UniqueIdentifier>{05c4ebe8-edf2-437c-8883-03336657c5ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\piConfigParser">
+      <UniqueIdentifier>{24103dba-d2de-4f34-8e3a-9ab4b8a464b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\libmodbus">
+      <UniqueIdentifier>{7a449bb1-888a-41ae-822a-f8fef1a2ed73}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\ComAndDataProcessor.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ModbusMasterThread.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\piModbusMaster.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Scheduler.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\piConfigParser\piConfigParser.c">
+      <Filter>Source files\piConfigParser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\platform\sw\piControl\piControlIf.c">
+      <Filter>Source files\piControl</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
+    <None Include="debug.mak">
+      <Filter>Make files</Filter>
+    </None>
+    <None Include="piModbusMasterStretch-Debug.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="release.mak">
+      <Filter>Make files</Filter>
+    </None>
+    <None Include="piModbusMasterStretch-Release.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="target.mak">
+      <Filter>Make files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="project.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ComAndDataProcessor.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\modbusconfig.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ModbusMasterThread.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Scheduler.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\piConfigParser\piConfigParser.h">
+      <Filter>Source files\piConfigParser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\platform\sw\piControl\piControl.h">
+      <Filter>Source files\piControl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\platform\sw\piControl\piControlIf.h">
+      <Filter>Source files\piControl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libmodbus\modbus.h">
+      <Filter>Source files\libmodbus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libmodbus\modbus-private.h">
+      <Filter>Source files\libmodbus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libmodbus\modbus-rtu.h">
+      <Filter>Source files\libmodbus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libmodbus\modbus-rtu-private.h">
+      <Filter>Source files\libmodbus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libmodbus\modbus-tcp.h">
+      <Filter>Source files\libmodbus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libmodbus\modbus-tcp-private.h">
+      <Filter>Source files\libmodbus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libmodbus\modbus-version.h">
+      <Filter>Source files\libmodbus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libmodbus\config.h">
+      <Filter>Source files\libmodbus</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

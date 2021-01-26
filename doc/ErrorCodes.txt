@@ -1,0 +1,55 @@
+
+
+ErrorCodes im Prozessabbild
+===============================================================================
+
+ModbusTCP 
+-------------------------------------------------------------------------------
+Modbus_Master_Status
+16	0x10    Initialisierung ist fehlgeschlagen
+17	0x11    Das Gerät ist nicht erreichbar (falsche IP, Kabel?)
+
+Modbus_Action_Status
+1       ILLEGAL FUNCTION        Der verwendete Functioncode ist nicht erlaubt. Prüfe, ob Du den richtigen Functioncode verwendest.
+2       ILLEGAL DATA ADDRESS    Die verwendete Adresse ist nicht gültig. Das Register ist entweder schreibgeschützt oder existiert nicht. Überprüfe die Adresse.
+3       ILLEGAL DATA VALUE      Mindestens ein Teil der verwendeten Datenwerte ist ungültig. Es wäre z. B. möglich, dass Du eine zu hohe Registeranzahl angegeben hast. Prüfe Deine Werte.
+13      INVALID DATA    	Der Slave hat mit meinen unvollständigen Paket geantwortet. Das kann z.B. auftreten nachdem die Verbindung unterbrochen wurde. Prüfe deine Verkabelung.
+110     CONNECTION TIMED OUT    Der Slave hat nicht schnell genug oder garnicht geantwortet. Prüfe Deine Konfiguration und Verkabelung.
+
+
+
+ModbusRTU
+-------------------------------------------------------------------------------
+Modbus_Master_Status
+16	0x10    Initialisierung ist fehlgeschlagen
+17	0x11    Serielle Verbindung kann nicht geöffnet werden (device name falsch, unzulässige Konfiguration)
+
+Modbus_Action_Status
+1       ILLEGAL FUNCTION        Der verwendete Functioncode ist nicht erlaubt. Prüfe, ob Du den richtigen Functioncode verwendest.
+2       ILLEGAL DATA ADDRESS    Die verwendete Adresse ist nicht gültig. Das Register ist entweder schreibgeschützt oder existiert nicht. Überprüfe die Adresse.
+3       ILLEGAL DATA VALUE      Mindestens ein Teil der verwendeten Datenwerte ist ungültig. Es wäre z. B. möglich, dass Du eine zu hohe Registeranzahl angegeben hast. Prüfe Deine Werte.
+11	Resource temporarily unavailable
+12	Invalid CRC		Vom Slave wurde ein gestörtes Paket empfangen. Das kann z.B. auftreten nachdem die Verbindung unterbrochen wurde. Prüfe deine Verkabelung.
+13      INVALID DATA    	Vom Slave wurde ein unvollständiges Paket empfangen. Das kann z.B. auftreten nachdem die Verbindung unterbrochen wurde. Prüfe deine Verkabelung.
+110     CONNECTION TIMED OUT    Der Slave hat nicht schnell genug oder garnicht geantwortet. Prüfe Deine Konfiguration und Verkabelung.
+104	Connection reset by peer
+
+
+
+alle internen Fehlermeldungen, die aber nicht auftreten und auch nicht dokumentiert werden brauchen
+-------------------------------------------------------------------------------
+1	Illegal function
+2	Illegal data address
+3	Illegal data value
+4	Slave device or server failure
+5	Acknowledge
+6	Slave device or server is busy
+7	Negative acknowledge
+8	Memory parity error
+10	Gateway path unavailable
+11	Target device failed to respond
+12	Invalid CRC
+13	Invalid data
+14	Invalid exception code
+15	Too many data
+

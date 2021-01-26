@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29411.108
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "piModbusMaster", "piModbusMaster\piModbusMaster.vcxproj", "{460CD0E7-506C-4B88-BBC0-3F5BA599B9A5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "piModbusMasterStretch", "piModbusMasterStretch\piModbusMasterStretch.vcxproj", "{37A935A4-3EE5-4FD4-A406-C0AA76B23696}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "piModbusSlave", "piModbusSlave\piModbusSlave.vcxproj", "{39A649B2-5B6F-4DA8-9310-6D61486C21D6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "piModbusSlaveStretch", "piModbusSlaveStretch\piModbusSlaveStretch.vcxproj", "{CDBAA32D-6E69-47A5-834D-B4B1E904B0CF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|VisualGDB = Debug|VisualGDB
+		Debug|x86 = Debug|x86
+		Release|VisualGDB = Release|VisualGDB
+		Release|x86 = Release|x86
+		Target|VisualGDB = Target|VisualGDB
+		Target|x86 = Target|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{460CD0E7-506C-4B88-BBC0-3F5BA599B9A5}.Debug|VisualGDB.ActiveCfg = Debug|Win32
+		{460CD0E7-506C-4B88-BBC0-3F5BA599B9A5}.Debug|x86.ActiveCfg = Debug|Win32
+		{460CD0E7-506C-4B88-BBC0-3F5BA599B9A5}.Debug|x86.Build.0 = Debug|Win32
+		{460CD0E7-506C-4B88-BBC0-3F5BA599B9A5}.Release|VisualGDB.ActiveCfg = Release|Win32
+		{460CD0E7-506C-4B88-BBC0-3F5BA599B9A5}.Release|x86.ActiveCfg = Release|Win32
+		{460CD0E7-506C-4B88-BBC0-3F5BA599B9A5}.Release|x86.Build.0 = Release|Win32
+		{460CD0E7-506C-4B88-BBC0-3F5BA599B9A5}.Target|VisualGDB.ActiveCfg = Target|Win32
+		{460CD0E7-506C-4B88-BBC0-3F5BA599B9A5}.Target|x86.ActiveCfg = Target|Win32
+		{460CD0E7-506C-4B88-BBC0-3F5BA599B9A5}.Target|x86.Build.0 = Target|Win32
+		{37A935A4-3EE5-4FD4-A406-C0AA76B23696}.Debug|VisualGDB.ActiveCfg = Debug|Win32
+		{37A935A4-3EE5-4FD4-A406-C0AA76B23696}.Debug|x86.ActiveCfg = Debug|Win32
+		{37A935A4-3EE5-4FD4-A406-C0AA76B23696}.Debug|x86.Build.0 = Debug|Win32
+		{37A935A4-3EE5-4FD4-A406-C0AA76B23696}.Release|VisualGDB.ActiveCfg = Release|Win32
+		{37A935A4-3EE5-4FD4-A406-C0AA76B23696}.Release|x86.ActiveCfg = Release|Win32
+		{37A935A4-3EE5-4FD4-A406-C0AA76B23696}.Release|x86.Build.0 = Release|Win32
+		{37A935A4-3EE5-4FD4-A406-C0AA76B23696}.Target|VisualGDB.ActiveCfg = Target|Win32
+		{37A935A4-3EE5-4FD4-A406-C0AA76B23696}.Target|x86.ActiveCfg = Target|Win32
+		{37A935A4-3EE5-4FD4-A406-C0AA76B23696}.Target|x86.Build.0 = Target|Win32
+		{39A649B2-5B6F-4DA8-9310-6D61486C21D6}.Debug|VisualGDB.ActiveCfg = Debug|Win32
+		{39A649B2-5B6F-4DA8-9310-6D61486C21D6}.Debug|x86.ActiveCfg = Debug|Win32
+		{39A649B2-5B6F-4DA8-9310-6D61486C21D6}.Debug|x86.Build.0 = Debug|Win32
+		{39A649B2-5B6F-4DA8-9310-6D61486C21D6}.Release|VisualGDB.ActiveCfg = Release|Win32
+		{39A649B2-5B6F-4DA8-9310-6D61486C21D6}.Release|x86.ActiveCfg = Release|Win32
+		{39A649B2-5B6F-4DA8-9310-6D61486C21D6}.Release|x86.Build.0 = Release|Win32
+		{39A649B2-5B6F-4DA8-9310-6D61486C21D6}.Target|VisualGDB.ActiveCfg = Target|Win32
+		{39A649B2-5B6F-4DA8-9310-6D61486C21D6}.Target|x86.ActiveCfg = Target|Win32
+		{39A649B2-5B6F-4DA8-9310-6D61486C21D6}.Target|x86.Build.0 = Target|Win32
+		{CDBAA32D-6E69-47A5-834D-B4B1E904B0CF}.Debug|VisualGDB.ActiveCfg = Debug|Win32
+		{CDBAA32D-6E69-47A5-834D-B4B1E904B0CF}.Debug|x86.ActiveCfg = Debug|Win32
+		{CDBAA32D-6E69-47A5-834D-B4B1E904B0CF}.Debug|x86.Build.0 = Debug|Win32
+		{CDBAA32D-6E69-47A5-834D-B4B1E904B0CF}.Release|VisualGDB.ActiveCfg = Release|Win32
+		{CDBAA32D-6E69-47A5-834D-B4B1E904B0CF}.Release|x86.ActiveCfg = Release|Win32
+		{CDBAA32D-6E69-47A5-834D-B4B1E904B0CF}.Release|x86.Build.0 = Release|Win32
+		{CDBAA32D-6E69-47A5-834D-B4B1E904B0CF}.Target|VisualGDB.ActiveCfg = Target|Win32
+		{CDBAA32D-6E69-47A5-834D-B4B1E904B0CF}.Target|x86.ActiveCfg = Target|Win32
+		{CDBAA32D-6E69-47A5-834D-B4B1E904B0CF}.Target|x86.Build.0 = Target|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3BADAC00-8A33-4E4E-8792-A323610FEA34}
+	EndGlobalSection
+EndGlobal

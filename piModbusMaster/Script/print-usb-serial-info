@@ -1,0 +1,17 @@
+#!/bin/bash
+for sysdevpath in $(find /sys/bus/usb/devices/usb*/ -name dev); do
+    (
+        syspath="${sysdevpath%/dev}"
+        devname="$(udevadm info -q name -p $syspath)"
+        [[ "$devname" == "bus/"* ]] && continue
+        eval "$(udevadm info -q property --export -p $syspath)"
+        [[ -z "$ID_SERIAL_SHORT" ]] && continue
+        [[ -z "$ID_VENDOR_ID" ]] && continue
+        [[ -z "$ID_MODEL_ID" ]] && continue
+        echo "    Vendor ID: $ID_VENDOR_ID"
+        echo "     Model ID: $ID_MODEL_ID"
+        echo "Serial number: $ID_SERIAL_SHORT"
+        echo "  Device name: /dev/$devname"
+        echo "--------------"
+    ) 
+done
