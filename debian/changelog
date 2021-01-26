@@ -1,3 +1,9 @@
+revpi-modbus (1.0.8-1) buster; urgency=medium
+
+  * unified the version number and changelog for master and slave
+
+ -- Zhi Han <z.han@kunbus.com>  Mon, 08 Feb 2021 13:25:31 +0100
+
 pimodbus-master (1.0.7-1stretch) stable; urgency=medium
 
   * Restart daemon on failure
@@ -36,6 +42,31 @@ pimodbus-master (1.0.3-1stretch) stable; urgency=medium
 
  -- Kunbus <admin@kunbus.de>  Tue, 13 Feb 2018 08:00:00 +0100
 
+pimodbus-master (1.0.6-1) stable; urgency=medium
+
+  * Restart daemon on failure
+  * svn 96
+
+ -- Kunbus <admin@kunbus.de>  Thu, 04 Jun 2020 12:00:00 +0200
+
+pimodbus-master (1.0.5-1) stable; urgency=medium
+
+  * some changes in rtu master only:
+  * change calculation of minimal time between modbus actions
+  * reset action status bytes more often
+  * add cleanup function
+  * svn 1059
+
+ -- Kunbus <admin@kunbus.de>  Thu, 19 Apr 2018 15:33:00 +0100
+
+pimodbus-master (1.0.4-1) stable; urgency=medium
+
+  * Fixed: use the offsets from the RAP file correctly
+  * improved error codes in process image
+  * svn 1051
+
+ -- Kunbus <admin@kunbus.de>  Fri, 06 Apr 2018 11:00:00 +0100
+
 pimodbus-master (1.0.2-1) stable; urgency=medium
 
   * Fixed: Close all sockets, if the master is restarted with new configuration
@@ -52,6 +83,40 @@ pimodbus-master (1.0.1-1) stable; urgency=medium
  -- Kunbus <admin@kunbus.de>  Wed,  1 Aug 2017 16:00:00 +0100
 
 pimodbus-master (1.0.0-1) stable; urgency=medium
+
+  * Initial release
+
+ -- Kunbus <admin@kunbus.de>  Wed,  8 Mar 2017 16:00:00 +0100
+
+
+pimodbus-slave (1.0.4-1stretch) stable; urgency=medium
+
+  * Restart daemon on failure
+  * svn 96
+
+ -- Kunbus <admin@kunbus.de>  Thu, 04 Jun 2020 12:00:00 +0200
+
+pimodbus-slave (1.0.3-1stretch) stable; urgency=medium
+
+  * svn 1001
+
+ -- Kunbus <admin@kunbus.de>  Tue, 13 Feb 2018 08:00:00 +0100
+
+pimodbus-slave (1.0.2-1) stable; urgency=medium
+
+  * Restart daemon on failure
+  * svn 96
+
+ -- Kunbus <admin@kunbus.de>  Thu, 04 Jun 2020 12:00:00 +0200
+
+pimodbus-slave (1.0.1-1) stable; urgency=medium
+
+  * Fixed: problems at startup
+  * svn 943
+
+ -- Kunbus <admin@kunbus.de>  Fri, 14 Nov 2017 08:00:00 +0100
+
+pimodbus-slave (1.0.0-1) stable; urgency=medium
 
   * Initial release
 

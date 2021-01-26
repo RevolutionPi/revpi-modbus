@@ -1,2 +1,0 @@
-#!/usr/bin/dh-exec
-Target/piModbusMaster	/usr/sbin
