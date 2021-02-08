@@ -1,0 +1,3 @@
+[submodule "piControl"]
+	path = piControl
+	url = https://github.com/RevolutionPi/piControl.git
