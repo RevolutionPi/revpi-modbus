@@ -8,7 +8,7 @@
 #ifndef MODBUS_PROCESSOR_H_
 #define MODBUS_PROCESSOR_H_
 
-#include <Scheduler.h>
+#include "Scheduler.h"
 #include <modbus/modbus.h>
 
 #define MODBUS_ADDRESS_OFFSET 1

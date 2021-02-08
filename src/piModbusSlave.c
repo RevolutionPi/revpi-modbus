@@ -16,9 +16,9 @@
 #include <syslog.h>
 
 #include "piModbusSlave.h"
-#include <ModbusSlaveThread.h>
-#include <piControlIf.h>
-#include <piConfigParser.h>
+#include "ModbusSlaveThread.h"
+#include <piTest/piControlIf.h>
+#include "piConfigParser/piConfigParser.h"
 
 
 int32_t main(int32_t argc, char *argv[])

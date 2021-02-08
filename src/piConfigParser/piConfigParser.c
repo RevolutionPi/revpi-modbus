@@ -5,9 +5,9 @@
  *
  */
 
-#include <project.h>
+#include "project.h"
 
-#include <piConfigParser.h>
+#include "piConfigParser.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,7 +18,7 @@
 #include <regex.h>
 
 #include <piControl.h>
-#include <piControlIf.h>
+#include <piTest/piControlIf.h>
 
 
 const char MODBUS_MASTER_ACTION_ID_KEY[]                        = "ActionId";

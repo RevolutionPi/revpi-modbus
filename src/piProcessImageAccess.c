@@ -5,8 +5,8 @@
  *
  */
 #include <stdio.h>
-#include <piProcessImageAccess.h>
-#include "piControlIf.h"
+#include "piProcessImageAccess.h"
+#include <piTest/piControlIf.h>
 #include <syslog.h>
 
 

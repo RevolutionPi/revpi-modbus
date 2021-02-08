@@ -1,7 +1,6 @@
-include_directories(../)
-include_directories(./)
-include_directories(./piConfigParser/)
-set(PICONTROLIF ../piControlIf.c)
+include_directories(../piControl/)
+
+set(PICONTROLIF ../piControl/piTest/piControlIf.c)
 set(COMM_OBJ piConfigParser/piConfigParser.c)
 
 add_executable(piModbusMaster

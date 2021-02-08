@@ -5,9 +5,9 @@
  *
  */
 
-#include <project.h>
+#include "project.h"
 
-#include <Scheduler.h>
+#include "Scheduler.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>

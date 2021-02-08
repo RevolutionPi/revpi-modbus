@@ -14,8 +14,8 @@
 
 
 #include <time.h>
-#include <modbusconfig.h>
 #include <sys/queue.h>
+#include "modbusconfig.h"
 
 extern const int32_t s32_microseconds_per_second;
 extern const int32_t s32_nanoseconds_per_second;

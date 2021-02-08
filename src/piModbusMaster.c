@@ -12,9 +12,9 @@
 #include "project.h"
 #include "modbusconfig.h"
 
-#include <ModbusMasterThread.h>
-#include <piConfigParser.h>
-#include <piControlIf.h>
+#include "ModbusMasterThread.h"
+#include "piConfigParser/piConfigParser.h"
+#include <piTest/piControlIf.h>
 
 #define DEBUG_MODE
 

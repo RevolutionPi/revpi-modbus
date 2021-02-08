@@ -5,15 +5,15 @@
  *
  */
 
-#include <project.h>
+#include "project.h"
 
 #define _POSIX_C_SOURCE 200112L //clock_nanosleep and struct timespec
 #include <time.h>
-#include <ComAndDataProcessor.h>
-#include <modbusconfig.h>
+#include "ComAndDataProcessor.h"
+#include "modbusconfig.h"
 #include <stdio.h>
 #include <errno.h>
-#include <piControlIf.h>
+#include <piTest/piControlIf.h>
 #include <sys/param.h>
 #include <assert.h>
 #include <syslog.h>

@@ -8,7 +8,7 @@
 #ifndef MODBUS_MASTER_THREAD_H_
 #define MODBUS_MASTER_THREAD_H_
 
-#include <modbusconfig.h>
+#include "modbusconfig.h"
 
 void *startTcpMasterThread(void *arg);
 void *startRtuMasterThread(void *arg);

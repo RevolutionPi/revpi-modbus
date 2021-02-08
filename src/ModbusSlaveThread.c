@@ -19,7 +19,7 @@
 
 #include "ModbusSlaveThread.h"
 
-#include <piProcessImageAccess.h>
+#include "piProcessImageAccess.h"
 
 //#define MODBUS_DEBUG
 

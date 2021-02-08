@@ -8,7 +8,7 @@
 #ifndef MODBUS_SLAVE_THREAD_H_
 #define MODBUS_SLAVE_THREAD_H_
 
-#include <modbusconfig.h>
+#include "modbusconfig.h"
 
 void *startTcpSlaveThread(void *arg);
 void *startRtuSlaveThread(void *arg);

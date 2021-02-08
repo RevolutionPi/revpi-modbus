@@ -11,7 +11,7 @@
 #include <sys/types.h>
 #include <stdint.h>
 #include <json-c/json.h>
-#include <modbusconfig.h>
+#include "../modbusconfig.h"
 #include <sys/queue.h>
 
 #define VARIABLE_NAME_ARRAY_POSITION 0

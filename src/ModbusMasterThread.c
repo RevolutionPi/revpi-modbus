@@ -5,18 +5,18 @@
  *
  */
 
-#include <project.h>
+#include "project.h"
 
 #define _POSIX_C_SOURCE 200112L //clock_nanosleep and struct timespec
 #include <stdio.h>
 #include <errno.h>
 #include <pthread.h>
 #include <sched.h>
-#include <modbusconfig.h>
+#include "modbusconfig.h"
 #include <unistd.h>
-#include <Scheduler.h>
-#include <ComAndDataProcessor.h>
-#include <ModbusMasterThread.h>
+#include "Scheduler.h"
+#include "ComAndDataProcessor.h"
+#include "ModbusMasterThread.h"
 #include <syslog.h>
 
 #ifndef _MSC_VER

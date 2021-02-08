@@ -7,7 +7,7 @@
 #ifndef PI_PROCESS_IMAGE_ACCESS_H_
 #define PI_PROCESS_IMAGE_ACCESS_H_
 
-#include <modbusconfig.h>
+#include "modbusconfig.h"
 
 int32_t writeModbusDataToProcessImage(modbus_mapping_t* mbMapping, TProcessImageConfiguration* ptrSPiProcessImageOffsets);
 int32_t readModbusDataFromProcessImage(modbus_mapping_t* mbMapping, TProcessImageConfiguration* ptrSPiProcessImageOffsets);
