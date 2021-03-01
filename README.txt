@@ -1,61 +1,71 @@
-piModbus Master und Slave Changelog
-=============================================================
+**Upcoming changes
+--------------------------------------------------------------------------------
+* in the function determineNextEvent () the last target time will be the
+Period length added to calculate the next execution time.
+If the connection was interrupted for a long time, however, they accumulate
+many versions of the then with a shorter period length
+(tv_earliest_next_trigger_time) are processed. If the cycle times anyway
+are already tightly laid out, this can lead to an overload. Must
+be changed. The next execution time must be the current time plus
+Be cycle time.
 
 
+**Error Codes in Process Image
+--------------------------------------------------------------------------------
 
-
-Anstehende Änderungen
---------------------------------------------------------------
-* in der Funktion determineNextEvent() wird wird zu letzten Soll-Zeit die 
-Periodenlänge addiert um die den nächsten Ausführungszeitpunkt zu berchnen. 
-Wenn die Verbindung aber längere Zeit unterbrochen war sammeln sich dadurch 
-viele Ausführungen an die dann mit einer kürzeren Periodenlänge 
-(tv_earliest_next_trigger_time) abgearbeitet werden. Wenn die Zykluszeiten eh 
-schon knapp ausgelegt sind, kann das zu einer Überlastung führen. Das muss 
-geändert werden. Die nächste Ausführungszeit muss die akutelle Zeit plus 
-Zykluszeit sein.
-
-
-
-
-ErrorCodes im Prozessabbild
-===============================================================================
-
-ModbusTCP 
--------------------------------------------------------------------------------
+ModbusTCP
+-----------------------------
 Modbus_Master_Status
-16	0x10    Initialisierung ist fehlgeschlagen
-17	0x11    Das Gerät ist nicht erreichbar (falsche IP, Kabel?)
+16	0x10		Initialization is failed
+17	0x11		This device is not readable(false IP, Cabel?)
 
 Modbus_Action_Status
-1       ILLEGAL FUNCTION        Der verwendete Functioncode ist nicht erlaubt. Prüfe, ob Du den richtigen Functioncode verwendest.
-2       ILLEGAL DATA ADDRESS    Die verwendete Adresse ist nicht gültig. Das Register ist entweder schreibgeschützt oder existiert nicht. Überprüfe die Adresse.
-3       ILLEGAL DATA VALUE      Mindestens ein Teil der verwendeten Datenwerte ist ungültig. Es wäre z. B. möglich, dass Du eine zu hohe Registeranzahl angegeben hast. Prüfe Deine Werte.
-13      INVALID DATA    	Der Slave hat mit meinen unvollständigen Paket geantwortet. Das kann z.B. auftreten nachdem die Verbindung unterbrochen wurde. Prüfe deine Verkabelung.
-110     CONNECTION TIMED OUT    Der Slave hat nicht schnell genug oder garnicht geantwortet. Prüfe Deine Konfiguration und Verkabelung.
-
-
+1	ILLEGAL FUNCTION	The applied function code is not allowed.
+				Check whether the right function code is used.
+2	ILLEGAL DATA ADDRESS	The applied address is not valid.
+				The register is either read-only or not existed.
+				Please check the address.
+3	ILLEGAL DATA VALUE	At least one part of the applied data is invalid.
+				It is possible that the count of register is exceed.
+				Please check the value.
+13	INVALID DATA		The Slave answered with an unknown package to me.
+				This can occur, for example, after the connection
+				has been interrupted.
+				Please check your wiring.
+110	CONNECTION TIMED OUT	The slave didn't respond in time or not at all.
+				Please check your configuration and cabling.
 
 ModbusRTU
--------------------------------------------------------------------------------
+-----------------------------
 Modbus_Master_Status
-16	0x10    Initialisierung ist fehlgeschlagen
-17	0x11    Serielle Verbindung kann nicht geöffnet werden (device name falsch, unzulässige Konfiguration)
+16	0x10		Initialization is failed
+17	0x11		Serial connection can't be opened (wrong device name,
+			invalid configuration)
 
 Modbus_Action_Status
-1       ILLEGAL FUNCTION        Der verwendete Functioncode ist nicht erlaubt. Prüfe, ob Du den richtigen Functioncode verwendest.
-2       ILLEGAL DATA ADDRESS    Die verwendete Adresse ist nicht gültig. Das Register ist entweder schreibgeschützt oder existiert nicht. Überprüfe die Adresse.
-3       ILLEGAL DATA VALUE      Mindestens ein Teil der verwendeten Datenwerte ist ungültig. Es wäre z. B. möglich, dass Du eine zu hohe Registeranzahl angegeben hast. Prüfe Deine Werte.
-11	Resource temporarily unavailable
-12	Invalid CRC		Vom Slave wurde ein gestörtes Paket empfangen. Das kann z.B. auftreten nachdem die Verbindung unterbrochen wurde. Prüfe deine Verkabelung.
-13      INVALID DATA    	Vom Slave wurde ein unvollständiges Paket empfangen. Das kann z.B. auftreten nachdem die Verbindung unterbrochen wurde. Prüfe deine Verkabelung.
-110     CONNECTION TIMED OUT    Der Slave hat nicht schnell genug oder garnicht geantwortet. Prüfe Deine Konfiguration und Verkabelung.
-104	Connection reset by peer
+1	ILLEGAL FUNCTION	The applied function code is not allowed.
+				Check whether the right function code is used.
+2	ILLEGAL DATA ADDRESS	The applied address is not valid.
+				The register is either read-only or not existed.
+				Please check the address.
+3	ILLEGAL DATA VALUE	At least one part of the applied data is invalid.
+				It is possible that the count of register is exceed.
+				Please check the value.
+11				Resource temporarily unavailable
+12	Invalid CRC		A disturbed packet was received from the slave.
+				This can occur, for example, after the connection
+				has been interrupted.
+				Please check your wiring.
+13	INVALID DATA		An incomplete packet was received from the slave.
+				This can occur, for example, after the connection
+				has been interrupted.
+				Please check your wiring.
+110	CONNECTION TIMED OUT	The slave didn't respond in time or not at all.
+				Please check your configuration and cabling.
+104				Connection reset by peer
 
-
-
-alle internen Fehlermeldungen, die aber nicht auftreten und auch nicht dokumentiert werden brauchen
--------------------------------------------------------------------------------
+all internal error messages that do not occur and do not need to be documented
+-----------------------------
 1	Illegal function
 2	Illegal data address
 3	Illegal data value
@@ -71,69 +81,92 @@ alle internen Fehlermeldungen, die aber nicht auftreten und auch nicht dokumenti
 14	Invalid exception code
 15	Too many data
 
-Beispielkonfiguration für die config.rsc
 
-
+**Example configuration for the config.rsc
+--------------------------------------------------------------------------------
 {
+
 "config": {
-                "modbusActions": [
-                {
-                        "SlaveAddress" : 1,					Adresse des Modbus Slaves, der durch den Befehl angesprochen wird
-                        "FunctionCode" : 2,					Modbus Functionscode s.u.
-                        "RegisterAddress" : 1,				Modbus Registeradresse(Startadresse) des Slaves
-                        "QuantityOfRegisters" : 8,			Anzahl der Modbus Register, die geschrieben/gelsen werden 
-                        "ActionInterval" : 100000,			Zeitintervall indem der Befehl vom Master gesendet wird in µsec. Für den Benutzer reicht hier ggf. Angabe in 1ms Schritten
-                        "ProcessImageStartByte" : 2,		Der Offset im Pi Prozess Abbild für die Modbusdaten
-                        "Action ID" : 1						Aufsteigende ID für den Befehl zur Information im Fehlerfall
-                },
-                {
-                        "SlaveAddress" : 1,
-                        "FunctionCode" : 3,
-                        "RegisterAddress" : 1200,
-                        "QuantityOfRegisters" : 8,
-                        "ActionInterval" : 200000,
-                        "ProcessImageStartByte" : 18,
-                        "Action ID" : 2
-                },
-                {
-                        "SlaveAddress" : 2,
-                        "FunctionCode" : 16,
-                        "RegisterAddress" : 1024,
-                        "QuantityOfRegisters" : 8,
-                        "ActionInterval" : 500000,
-                        "ProcessImageStartByte" : 2,
-                        "Action ID" : 3
-                }
-                        ]
-        }
+	"modbusActions": [
+		{
+			"SlaveAddress" : 1,
+			# Address of the Modbus slave which is addressed by the
+			# command
+
+			"FunctionCode" : 2,
+			# Modbus function code see below
+
+			"RegisterAddress" : 1,
+			# Modbus register address (start address) of the slave
+
+			"QuantityOfRegisters" : 8,
+			# Number of Modbus registers that are written / read
+
+			"ActionInterval" : 100000,
+			# Time interval in which the command is sent from the
+			# master in µsec. For the user, information in 1 ms
+			# steps is sufficient
+
+			"ProcessImageStartByte" : 2,
+			# The offset in the Pi process image for the Modbus data
+
+			"Action ID" : 1
+			# Ascending ID for the command for information in the
+			# event of an error
+		},
+		{
+			"SlaveAddress" : 1,
+			"FunctionCode" : 3,
+			"RegisterAddress" : 1200,
+			"QuantityOfRegisters" : 8,
+			"ActionInterval" : 200000,
+			"ProcessImageStartByte" : 18,
+			"Action ID" : 2
+		},
+		{
+			"SlaveAddress" : 2,
+			"FunctionCode" : 16,
+			"RegisterAddress" : 1024,
+			"QuantityOfRegisters" : 8,
+			"ActionInterval" : 500000,
+			"ProcessImageStartByte" : 2,
+			"Action ID" : 3
+		}
+	]
+}
+
 }
 
 
-____________________________________________________________________________________________________________________________________________
 
-ModbusFunktionscodes:
-Wichtige Funktionscodes sind mit '*' gekennzeichnet. Die anderen Funktionscodes müssen ggf. nicht unterstützt werden
+Modbus Function Codes:
+-----------------------------
+Important function codes are marked with '*'.The other function codes may not
+need to be supported.
 
-*	eREAD_COILS					= 0x01,
+*	eREAD_COILS			= 0x01,
 *	eREAD_DISCRETE_INPUTS		= 0x02,
 *	eREAD_HOLDING_REGISTERS		= 0x03,
 *	eREAD_INPUT_REGISTERS		= 0x04,
-*	eWRITE_SINGLE_COIL			= 0x05,
+*	eWRITE_SINGLE_COIL		= 0x05,
 *	eWRITE_SINGLE_REGISTER		= 0x06,
-	eREAD_EXCEPTION_STATUS		= 0x07,	//serial line only, not supported by libmodbus v3.0.6
+	eREAD_EXCEPTION_STATUS		= 0x07,	//serial line only, not supported
+						//by libmodbus v3.0.6
 *	eWRITE_MULTIPLE_COILS		= 0x0F,
 *	eWRITE_MULTIPLE_REGISTERS	= 0x10,
 	eREPORT_SLAVE_ID			= 0x11,
 	eWRITE_MASK_REGISTER		= 0x16,
 	eWRITE_AND_READ_REGISTERS	= 0x17,
-	
-	Coils und Discrete Inputs haben eine größe von einem Bit. Im Prozessabbild sollte für jedes Bit aber ein Byte reserviert werden.
-	Holding Registers und Input Registers haben eine größe von 2 Byte.
-	
-____________________________________________________________________________________________________________________________________________
 
-Für jeden Modbusbefehl muss zusätzlich ein Byte im Pi Prozessabbild für Fehlermeldungen reserviert werden.
-Für das virtuelle Gerät muss zusätzlich ein Byte im Pi Prozessabbild für Fehlermeldungen reserviert werden.
+Coils and Discrete Inputs are one bit in size. In the process image, however,
+one byte should be reserved for each bit.Holding registers and input registers
+have a size of 2 bytes.
 
-Für jeden Modbusbefehl und das virtuelle Gerät muss jeweils ein bit zum zurücksetzen des Fehlerbytes im Pi Prozessabbild reserviert werden
-	
+For each Modbus command, an additional byte must be reserved in the Pi process
+image for error messages.
+
+For the virtual device, a byte must also be reserved in the Pi process image for
+error messages.
+
+For each Modbus command and the virtual device, a bit must be reserved to reset
+the error byte in the Pi process image
