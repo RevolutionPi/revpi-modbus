@@ -1,3 +1,8 @@
+revpi-modbus (1.0.8-2) buster; urgency=medium
+
+  * debian version incremented alongwith submodule piControl 
+
+ -- Amar Jadhav <a.jadhav@kunbus.com>  Mon, 19 Mar 2021 14:00:00 +0100
 revpi-modbus (1.0.8-1) buster; urgency=medium
 
   * unified the version number and changelog for master and slave
