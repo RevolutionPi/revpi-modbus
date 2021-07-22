@@ -17,12 +17,13 @@
 #include <sys/param.h>
 #include <assert.h>
 #include <syslog.h>
+#include <pthread.h>
 
 #ifndef MODBUS_MAX_PDU_LENGTH 
 #define MODBUS_MAX_PDU_LENGTH 253
 #endif
 
-uint8_t buffer[MAX_MODBUS_READ_COILS_COUNT] = { 0 };  //max 2000 coils, every coil, has its own byte 
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 /************************************************************************/
 /** @ brief processing the given modbus action and updates the process image
@@ -37,10 +38,14 @@ uint8_t buffer[MAX_MODBUS_READ_COILS_COUNT] = { 0 };  //max 2000 coils, every co
  *	
  */
 /************************************************************************/
-int32_t processModbusAction(modbus_t *pModbusContext, tModbusEvent* mb_event)
+int32_t processModbusAction(modbus_t *pModbusContext, tModbusEvent* mb_event, uint8_t *buffer)
 {
     int32_t len = 0;
     int32_t successful = 0;
+     
+	// use a mutex since modbus_ctx is not thread safe
+    pthread_mutex_lock(&mutex);
+	
     //process modbus action
     switch ((mb_event->ptModbusAction->eFunctionCode))
     {
@@ -291,6 +296,7 @@ int32_t processModbusAction(modbus_t *pModbusContext, tModbusEvent* mb_event)
     }
     
     
+	pthread_mutex_unlock(&mutex);
     return len;
 }
 

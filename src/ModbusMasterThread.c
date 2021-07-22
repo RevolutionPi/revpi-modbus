@@ -69,6 +69,7 @@ void *startTcpMasterThread(void *arg)
     }
     
     
+	uint8_t buffer[MAX_REGISTER_BYTES_COUNT_PER_ACTION_REQUEST] = { 0 };     //max accessed bytes in single pictory action
     TTcpConfig *ptTcpConfig_l = &psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig;
     modbus_t *pModbusContext = NULL;
     char st8TcpPort[12];
@@ -218,7 +219,7 @@ void *startTcpMasterThread(void *arg)
                     syslog(LOG_ERR, "Set Modbus slave address for next command failed: %s\n", modbus_strerror(errno));
                 }
         
-                ret_val_modbus_action = processModbusAction(pModbusContext, &nextEvent);
+                ret_val_modbus_action = processModbusAction(pModbusContext, &nextEvent, buffer);
 
                 //store earliest next trigger time for next event
                 clock_gettime(CLOCK_MONOTONIC, &tv_current);
@@ -308,6 +309,7 @@ void *startRtuMasterThread(void *arg)
     }
     
     
+	uint8_t buffer[MAX_REGISTER_BYTES_COUNT_PER_ACTION_REQUEST] = { 0 };      //max accessed bytes in single pictory action
     TRtuConfig *ptRtuConfig_l = &psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig;
     modbus_t *pModbusContext = NULL; 
     char st8TcpPort[12];
@@ -498,7 +500,7 @@ void *startRtuMasterThread(void *arg)
             syslog(LOG_ERR, "Set Modbus slave address for next command failed: %s\n", modbus_strerror(errno));
         }
         
-        ret_val_modbus_action = processModbusAction(pModbusContext, &nextEvent);
+        ret_val_modbus_action = processModbusAction(pModbusContext, &nextEvent, buffer);
         
         //store earliest next trigger time for next event
         clock_gettime(CLOCK_MONOTONIC, &tv_current);
