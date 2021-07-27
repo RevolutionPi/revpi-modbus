@@ -24,7 +24,6 @@
 #endif
 
 pthread_mutex_t mutex_master_instance = PTHREAD_MUTEX_INITIALIZER;
-uint8_t buffer[MAX_MODBUS_READ_COILS_COUNT] = { 0 };  //max 2000 coils, every coil, has its own byte 
 
 /************************************************************************/
 /** @ brief processing the given modbus action and updates the process image
@@ -39,7 +38,7 @@ uint8_t buffer[MAX_MODBUS_READ_COILS_COUNT] = { 0 };  //max 2000 coils, every co
  *	
  */
 /************************************************************************/
-int32_t processModbusAction(modbus_t *pModbusContext, tModbusEvent* mb_event)
+int32_t processModbusAction(modbus_t *pModbusContext, tModbusEvent* mb_event, uint8_t *buffer)
 {
     int32_t len = 0;
     int32_t successful = 0;
