@@ -243,7 +243,7 @@ int32_t processModbusAction(modbus_t *pModbusContext, tModbusEvent* mb_event, ui
             assert(mb_event->ptModbusAction->i16uRegisterCount <= MODBUS_MAX_PDU_LENGTH);
 	        
 #if LIBMODBUS_VERSION_CHECK(3,1,2)
-	        len = modbus_report_slave_id(pModbusContext, MAX_MODBUS_READ_COILS_COUNT, (uint8_t*)buffer);
+	        len = modbus_report_slave_id(pModbusContext, MAX_REGISTER_SIZE_PER_ACTION, (uint8_t*)buffer);
 #else	
 	        len = modbus_report_slave_id(pModbusContext, (uint8_t*)buffer);
 #endif
