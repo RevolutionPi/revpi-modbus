@@ -69,7 +69,7 @@ void *startTcpMasterThread(void *arg)
     }
     
     
-    uint8_t buffer[MAX_MODBUS_READ_COILS_COUNT] = { 0 };  //max 2000 coils, every coil, has its own byte
+    uint8_t buffer[MAX_REGISTER_SIZE_PER_ACTION] = { 0 };  //max register size for each pictory action
     TTcpConfig *ptTcpConfig_l = &psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig;
     modbus_t *pModbusContext = NULL;
     char st8TcpPort[12];
@@ -324,7 +324,7 @@ void *startRtuMasterThread(void *arg)
     }
     
     
-    uint8_t buffer[MAX_MODBUS_READ_COILS_COUNT] = { 0 };  //max 2000 coils, every coil, has its own byte
+    uint8_t buffer[MAX_REGISTER_SIZE_PER_ACTION] = { 0 };  //max register size for each pictory action
     TRtuConfig *ptRtuConfig_l = &psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig;
     modbus_t *pModbusContext = NULL; 
     char st8TcpPort[12];
