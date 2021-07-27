@@ -1086,7 +1086,16 @@ int32_t parse_modbus_master_action_list(json_object *json_pi_device_p, struct TM
                 syslog(LOG_ERR, "parsing modbus action list failed. Parsing value failed\n");
                 return -6;
             }
-            assert((quantity_of_registers > 0) && (quantity_of_registers <= MAX_MODBUS_READ_COILS_COUNT));  //check min/max register quantity
+
+            if (quantity_of_registers > MAX_REGISTER_SIZE_PER_ACTION)
+            {
+                syslog(LOG_ERR,
+                    "Error PiCtory, qauantity of registers configured for action ID %d exceeds MAX REGISTER SIZE PER ACTION %d \n", 
+                    nextAction->modbusAction.i16uActionID,
+                    MAX_REGISTER_SIZE_PER_ACTION);
+            }
+
+            assert((quantity_of_registers > 0) && (quantity_of_registers <= MAX_REGISTER_SIZE_PER_ACTION));    //check min/max register quantity
             nextAction->modbusAction.i16uRegisterCount = quantity_of_registers;	
                         
                         
