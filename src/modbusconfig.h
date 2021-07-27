@@ -23,6 +23,9 @@
 #define MAX_MODBUS_WRITE_COILS_COUNT            1968
 #define MAX_MODBUS_WRITE_REGISTERS_COUNT        123
 
+//max register size for each modbus device action configured in pictory
+#define MAX_REGISTER_SIZE_PER_ACTION			256
+
 typedef enum
 {
     eProtRTU,
