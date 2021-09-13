@@ -1,3 +1,10 @@
+revpi-modbus (1.0.9-1) buster; urgency=medium
+
+  * debian: add gbp configuration
+  * Thread safe Modbus TCP/RTU multi Master instances
+
+ -- Philipp Rosenberger <p.rosenberger@kunbus.com>  Mon, 13 Sep 2021 16:19:20 +0200
+
 revpi-modbus (1.0.8-2) buster; urgency=medium
 
   * debian version incremented alongwith submodule piControl 
