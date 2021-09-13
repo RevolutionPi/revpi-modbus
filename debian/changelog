@@ -1,3 +1,9 @@
+revpi-modbus (1.0.9-2) buster; urgency=medium
+
+  * debian: add gbp configuration
+
+ -- Philipp Rosenberger <p.rosenberger@kunbus.com>  Mon, 13 Sep 2021 16:07:23 +0200
+
 revpi-modbus (1.0.9-1) buster; urgency=medium
 
   [ Amar Jadhav ]
