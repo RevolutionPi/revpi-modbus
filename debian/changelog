@@ -1,3 +1,10 @@
+revpi-modbus (1.0.9-1~revpi9+1) stretch; urgency=medium
+
+  * gbp.conf: set debian-branch to raspios/stretch
+  * rebuild for RaspiOS Stretch
+
+ -- Philipp Rosenberger <p.rosenberger@kunbus.com>  Tue, 14 Sep 2021 10:27:45 +0200
+
 revpi-modbus (1.0.9-1) buster; urgency=medium
 
   * debian: add gbp configuration
