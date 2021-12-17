@@ -1,7 +1,8 @@
 [Unit]
 Description=Revolution Pi Modbus slave
 Documentation=https://revolution.kunbus.com
-After=network.target systemd-modules-load.service
+After=network.target systemd-modules-load.service dev-ttyRS485.device
+Requires=dev-ttyRS485.device
 
 [Service]
 ExecStart=/usr/sbin/piModbusSlave
