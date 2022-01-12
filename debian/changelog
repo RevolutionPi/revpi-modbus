@@ -1,3 +1,12 @@
+revpi-modbus (1.0.10-1~revpi9+1) stretch; urgency=medium
+
+  [ Zhi Han ]
+  * Move systemd.service files from dist branches to master
+  * Make pimodbus services waiting for dev-ttyRS485.device
+  * Remove install pathes in debianization
+
+ --  Zhi Han <z.han@kunbus.com>  Wed, 12 Jan 2022 15:45:18 +0000
+
 revpi-modbus (1.0.9-1~revpi9+1) stretch; urgency=medium
 
   * gbp.conf: set debian-branch to raspios/stretch
