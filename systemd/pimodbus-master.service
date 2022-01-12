@@ -1,0 +1,14 @@
+[Unit]
+Description=Revolution Pi Modbus master
+Documentation=https://revolution.kunbus.com
+After=network.target systemd-modules-load.service dev-ttyRS485.device
+Requires=dev-ttyRS485.device
+
+[Service]
+ExecStart=/usr/sbin/piModbusMaster
+StandardOutput=journal
+StandardError=journal
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
