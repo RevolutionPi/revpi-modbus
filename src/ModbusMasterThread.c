@@ -298,7 +298,22 @@ void *startRtuMasterThread(void *arg)
 {
     //init modbus device
     TModbusMasterConfiguration *psModbusConfiguration_l = (TModbusMasterConfiguration *)arg;
-    
+    int logRtuPath = 0;
+
+    /* Wait for serial device getting ready(Readable, Writable) */
+    while(access(psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig.sz8DeviceFilePath,
+                                                            R_OK | W_OK)) {
+        if (!logRtuPath) {
+            syslog(LOG_INFO, "RTU Master waiting for serial device:%s\n",
+                psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig.sz8DeviceFilePath);
+            logRtuPath = 1;
+        }
+        /* Repeat checking in 1 Sec */
+        sleep(1);
+    }
+    syslog(LOG_INFO, "RTU Master got serial device:%s\n",
+        psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig.sz8DeviceFilePath);
+
     //set realtime priority of the thread
     if(setprio(20, SCHED_RR) < 0)
     {
