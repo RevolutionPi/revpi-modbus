@@ -1,8 +1,8 @@
-revpi-modbus (1.0.10-1ubuntu1) buster; urgency=medium
+revpi-modbus (1.0.11-1ubuntu1) buster; urgency=medium
 
   * Remove dependency for presence of dev-ttyRS485.device for service"
 
- -- Holger Jorra <holger@kunbus.com>  Tue, 19 Apr 2022 15:54:00 +0200
+ -- Holger Jorra <h.jorra@kunbus.com>  Tue, 19 Apr 2022 15:54:00 +0200
 
 revpi-modbus (1.0.10-1) buster; urgency=medium
 
