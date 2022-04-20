@@ -11,7 +11,6 @@
 #include "Scheduler.h"
 #include <modbus/modbus.h>
 
-#define MODBUS_ADDRESS_OFFSET 1
 
 int32_t processModbusAction(modbus_t *pModbusContext, tModbusEvent* nextEvent, uint8_t* buffer);
 int32_t writeErrorMessage(uint32_t status_byte_pi_offset_p, uint8_t modbus_error_code_p);

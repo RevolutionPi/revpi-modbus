@@ -73,7 +73,7 @@ void *startTcpMasterThread(void *arg)
     TTcpConfig *ptTcpConfig_l = &psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig;
     modbus_t *pModbusContext = NULL;
     char st8TcpPort[12];
-    sprintf(st8TcpPort, "%d", psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig.i32uPort);
+    snprintf(st8TcpPort, sizeof(st8TcpPort), "%d", psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig.i32uPort);
     
     pModbusContext = modbus_new_tcp_pi(
         psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig.szTcpIpAddress,
@@ -328,7 +328,7 @@ void *startRtuMasterThread(void *arg)
     TRtuConfig *ptRtuConfig_l = &psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig;
     modbus_t *pModbusContext = NULL; 
     char st8TcpPort[12];
-    sprintf(st8TcpPort, "%d", psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig.i32uPort);
+    snprintf(st8TcpPort, sizeof(st8TcpPort), "%d", psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig.i32uPort);
     
     pModbusContext = modbus_new_rtu(
         ptRtuConfig_l->sz8DeviceFilePath,

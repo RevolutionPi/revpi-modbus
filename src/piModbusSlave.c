@@ -24,7 +24,7 @@
 int32_t main(int32_t argc, char *argv[])
 {
     int i, modbusDevicesCount;
-    pthread_t *pThreads;
+    pthread_t *pThreads = NULL;
     
     (void)argc;
     (void)argv;

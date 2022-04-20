@@ -59,7 +59,7 @@ void cleanupTcpSlaveThread(void *ptr)
 
     for (fd = 0; fd < __FD_SETSIZE; fd++)
     {
-        if (FD_ISSET(fd, &h->refset))
+        if (FD_ISSET(fd, &h->refset)) // NOLINT
         {
             close(fd);
             syslog(LOG_ERR, "close socket %d\n", fd);
@@ -100,7 +100,7 @@ void *startTcpSlaveThread(void *arg)
     }
     
     char st8TcpPort[10];
-    sprintf(st8TcpPort, "%d", psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig.i32uPort);
+    snprintf(st8TcpPort, sizeof(st8TcpPort), "%d", psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig.i32uPort);
     hdl.mb_slave = modbus_new_tcp_pi(psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig.szTcpIpAddress, st8TcpPort);
     if (!hdl.mb_slave) {
         syslog(LOG_ERR, "Failed to create the modbus context\n");
