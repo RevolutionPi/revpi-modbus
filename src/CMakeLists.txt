@@ -1,9 +1,11 @@
 include_directories(../piControl/)
+set(TARGET_SLAVE piModbusSlave)
+set(TARGET_MASTER piModbusMaster)
 
 set(PICONTROLIF ../piControl/piTest/piControlIf.c)
 set(COMM_OBJ piConfigParser/piConfigParser.c)
 
-add_executable(piModbusMaster
+add_executable(${TARGET_MASTER}
 	${PICONTROLIF}
 	${COMM_OBJ}
 	ComAndDataProcessor.c
@@ -11,26 +13,31 @@ add_executable(piModbusMaster
 	piModbusMaster.c
 	Scheduler.c)
 
-target_link_libraries(piModbusMaster modbus rt pthread json-c)
+target_link_libraries(${TARGET_MASTER} modbus rt pthread json-c)
 
-set_property(TARGET piModbusMaster PROPERTY C_STANDARD 99)
+set_property(TARGET ${TARGET_MASTER} PROPERTY C_STANDARD 99)
+target_compile_options(${TARGET_MASTER} PRIVATE
+	-Wall -Wextra -Wpedantic -Werror
+)
 
-install(TARGETS piModbusMaster
+install(TARGETS ${TARGET_MASTER}
 	RUNTIME DESTINATION sbin
 )
 
-add_executable(piModbusSlave
+add_executable(${TARGET_SLAVE}
 	${PICONTROLIF}
 	${COMM_OBJ}
 	ModbusSlaveThread.c
 	piModbusSlave.c
 	piProcessImageAccess.c)
 
-target_link_libraries(piModbusSlave modbus pthread json-c)
+target_link_libraries(${TARGET_SLAVE} modbus pthread json-c)
 
-set_property(TARGET piModbusSlave PROPERTY C_STANDARD 99)
-
-install(TARGETS piModbusSlave
-	RUNTIME DESTINATION sbin
+set_property(TARGET ${TARGET_SLAVE} PROPERTY C_STANDARD 99)
+target_compile_options(${TARGET_SLAVE} PRIVATE
+	-Wall -Wextra -Wpedantic -Werror
 )
 
+install(TARGETS ${TARGET_SLAVE}
+	RUNTIME DESTINATION sbin
+)
