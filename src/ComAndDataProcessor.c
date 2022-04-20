@@ -22,6 +22,7 @@
 #ifndef MODBUS_MAX_PDU_LENGTH 
 #define MODBUS_MAX_PDU_LENGTH 253
 #endif
+#define MODBUS_ADDRESS_OFFSET 1
 
 pthread_mutex_t mutex_modbus_context = PTHREAD_MUTEX_INITIALIZER;
 
