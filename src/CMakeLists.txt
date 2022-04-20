@@ -13,6 +13,8 @@ add_executable(piModbusMaster
 
 target_link_libraries(piModbusMaster modbus rt pthread json-c)
 
+set_property(TARGET piModbusMaster PROPERTY C_STANDARD 99)
+
 install(TARGETS piModbusMaster
 	RUNTIME DESTINATION sbin
 )
@@ -25,6 +27,8 @@ add_executable(piModbusSlave
 	piProcessImageAccess.c)
 
 target_link_libraries(piModbusSlave modbus pthread json-c)
+
+set_property(TARGET piModbusSlave PROPERTY C_STANDARD 99)
 
 install(TARGETS piModbusSlave
 	RUNTIME DESTINATION sbin

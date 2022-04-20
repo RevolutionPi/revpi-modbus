@@ -103,10 +103,9 @@ int32_t initScheduler(struct TMBActionListHead tModbusActionListHead_p, struct s
 
 void cleanupScheduler(struct suEventListHead *pEventListHead_p)
 {
-    struct schedulerEvent* pNewSchedulerEvent;
- 
     while (!TAILQ_EMPTY(pEventListHead_p))
     {
+        struct schedulerEvent* pNewSchedulerEvent; 
         pNewSchedulerEvent = (struct schedulerEvent*)TAILQ_FIRST(pEventListHead_p);				
         TAILQ_REMOVE(pEventListHead_p, pNewSchedulerEvent, events);
         free(pNewSchedulerEvent);
@@ -143,7 +142,7 @@ int32_t getNextEvent(tModbusEvent* next_modbus_event_p, struct suEventListHead *
  *  
  */
 /************************************************************************/
-int32_t getNextEventAndTimeout(tModbusEvent* next_modbus_event_p, const struct timespec *time_elapsed_p, struct timespec *max_timeout_p, struct suEventListHead *pEventListHead_p)
+/*int32_t getNextEventAndTimeout(tModbusEvent* next_modbus_event_p, const struct timespec *time_elapsed_p, struct timespec *max_timeout_p, struct suEventListHead *pEventListHead_p)
 {
 //#error  Modbus action timeouts are not handled appropriate
     if (TAILQ_EMPTY(pEventListHead_p))
@@ -156,15 +155,15 @@ int32_t getNextEventAndTimeout(tModbusEvent* next_modbus_event_p, const struct t
         determineNextEvent_relativeTime(next_modbus_event_p, time_elapsed_p, max_timeout_p, pEventListHead_p);
     }
     return 0;
-}
+}*/
 
 
 /************************************************************************/
 /** @ brief determines the next modbus event 
-  *     Should only be invoked by function getNextEvent()
+ *     Should only be invoked by function getNextEvent()
  *  
  *  @param[in]	time_elapsed_p processing time of the previous modbus action to adjust the timing of all following modbus commands
-  *	@param[out] max_timeout_p maximum timeout value of all modbus actions in event list
+ *	@param[out] max_timeout_p maximum timeout value of all modbus actions in event list
  *  @return maximal timeout of all modbus actions
  *  
  */
@@ -195,7 +194,7 @@ void determineNextEvent(tModbusEvent* next_modbus_event_p, struct suEventListHea
  *  
  */
 /************************************************************************/
-int32_t determineNextEvent_relativeTime(tModbusEvent* next_modbus_event_p, const struct timespec *time_elapsed_p, struct timespec *max_timeout_p, struct suEventListHead *pEventListHead_p)
+/*int32_t determineNextEvent_relativeTime(tModbusEvent* next_modbus_event_p, const struct timespec *time_elapsed_p, struct timespec *max_timeout_p, struct suEventListHead *pEventListHead_p)
 {
     int32_t mb_action_timeout = 0;
     struct schedulerEvent* pEvent = NULL;
@@ -277,7 +276,7 @@ int32_t determineNextEvent_relativeTime(tModbusEvent* next_modbus_event_p, const
 #endif
     
     return mb_action_timeout;
-}
+}*/
 
 
 /************************************************************************/

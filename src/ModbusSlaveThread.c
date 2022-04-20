@@ -72,7 +72,6 @@ void *startTcpSlaveThread(void *arg)
     TModbusSlaveConfiguration *psModbusConfiguration_l = (TModbusSlaveConfiguration*)arg;
     struct hndlTcpSlaveThread hdl;
     int ret;
-    int master_socket = 0;
     int server_socket = -1;
     fd_set rdset;
     /* maximal file descriptor number */
@@ -137,6 +136,7 @@ void *startTcpSlaveThread(void *arg)
             
     while (1)
     {
+        int master_socket = 0;
         rdset = hdl.refset;
         ret = select(fdmax + 1, &rdset, NULL, NULL, NULL);
         if (ret == -1)

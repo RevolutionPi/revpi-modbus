@@ -158,7 +158,6 @@ void *startTcpMasterThread(void *arg)
             struct timespec tv_minimal_event_offset = { 0, 0 };
             get_minimal_modbus_event_offset(&tv_minimal_event_offset, &eventListHead);
 
-            int32_t ret_val_modbus_action = 0;
             int32_t err_cnt = 0;
     
             //for debug: calculate delay
@@ -169,6 +168,7 @@ void *startTcpMasterThread(void *arg)
         
             while (1)
             {
+                int32_t ret_val_modbus_action = 0;
                 getNextEvent(&nextEvent, &eventListHead);
 
                 //check if reset status is set and reset status if neccessarry
@@ -176,7 +176,7 @@ void *startTcpMasterThread(void *arg)
                     nextEvent.ptModbusAction->i32uResetStatusProcessImageByteOffset,
                     nextEvent.ptModbusAction->i8uResetStatusProcessImageBitOffset,
                     nextEvent.ptModbusAction->i32uStatusByteProcessImageOffset);
-        
+ 
                 ret_val_modbus_action = reset_modbus_master_status(
                     psModbusConfiguration_l->tModbusDeviceConfig.i32uDeviceStatusResetByteProcessImageByteOffset,
                     psModbusConfiguration_l->tModbusDeviceConfig.i32uDeviceStatusByteProcessImageOffset);
@@ -443,7 +443,6 @@ void *startRtuMasterThread(void *arg)
         (int)(tv_minimal_event_offset.tv_nsec / 1000));
 #endif
     
-    int32_t ret_val_modbus_action = 0;
     writeErrorMessage(psModbusConfiguration_l->tModbusDeviceConfig.i32uDeviceStatusByteProcessImageOffset, (uint8_t)(eNoError));
     
     //for debug: calculate delay
@@ -452,6 +451,7 @@ void *startRtuMasterThread(void *arg)
     
     while (1)
     {
+        int32_t ret_val_modbus_action = 0;
         getNextEvent(&nextEvent, &eventListHead);
 
 #if 0

@@ -637,29 +637,25 @@ const char* get_device_string_parameter(json_object *json_device_config_paramete
 /*****************************************************************************/
 int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TModbusDeviceConfiguration* modbusDeviceConfig_p)
 {
-    int32_t ret_val = -1;
     const char* productType = NULL;
     json_object *json_pi_product_type = NULL;
                 
     if (!(json_object_object_get_ex(json_device_object_p, "productType", &json_pi_product_type)))
     {
         syslog(LOG_ERR, "parsing device config failed\n");
-        ret_val = -1;
-        return ret_val;			
+        return -1;
     }
     if (json_object_get_type(json_pi_product_type) != json_type_string)
     {
         syslog(LOG_ERR, "parsing device config failed\n");
-        ret_val = -2;
-        return ret_val;			
+        return -2;
     }
     productType = json_object_get_string(json_pi_product_type);
     json_object *json_modbus_config_parameters = NULL;
     if (!(json_object_object_get_ex(json_device_object_p, "mem", &json_modbus_config_parameters)))
     {
         syslog(LOG_ERR, "parsing device config failed\n");
-        ret_val = -3;
-        return ret_val;			
+        return -3;
     }
     //modbus tcp
     if (memcmp(productType, MODBUS_MASTER_TCP_PI_PRODUCT_TYPE, strlen(productType)) == 0)
@@ -673,14 +669,12 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         if (array_content_string == NULL)
         {
             syslog(LOG_ERR, "parsing config failed\n");
-            ret_val = -3;
-            return ret_val;
+            return -3;
         }
         if ((strlen(array_content_string)) >= (INET_ADDRSTRLEN))
         {
             syslog(LOG_ERR, "parsing config failed, wrong parameter size for ip address\n");
-            ret_val = -4;
-            return ret_val;
+            return -4;
         }
         strcpy(modbusDeviceConfig_p->uProt.tTcpConfig.szTcpIpAddress, array_content_string);		
                 
@@ -689,8 +683,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         if (array_content_string == NULL)
         {
             syslog(LOG_ERR, "parsing config failed\n");
-            ret_val = -5;
-            return ret_val;
+            return -5;
         }
         errno = 0;
         uint32_t tcp_port = strtoumax(array_content_string, NULL, 10);
@@ -698,8 +691,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         {
                 //error
             syslog(LOG_ERR, "parsing config file tcp port failed: %s", strerror(errno));
-            ret_val = -6;
-            return ret_val;
+            return -6;
         }
         modbusDeviceConfig_p->uProt.tTcpConfig.i32uPort = tcp_port;
     }
@@ -717,8 +709,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         if (array_content_string == NULL)
         {
             syslog(LOG_ERR, "parsing config failed\n");
-            ret_val = -5;
-            return ret_val;
+            return -5;
         }
         errno = 0;
         uint32_t tcp_port = strtoumax(array_content_string, NULL, 10);
@@ -726,8 +717,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         {
                 //error
             syslog(LOG_ERR, "parsing config file tcp port failed: %s", strerror(errno));
-            ret_val = -6;
-            return ret_val;
+            return -6;
         }
         modbusDeviceConfig_p->uProt.tTcpConfig.i32uPort = tcp_port;
                 
@@ -738,8 +728,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
             if (array_content_string == NULL)
             {
                 syslog(LOG_ERR, "parsing config failed\n");
-                ret_val = -7;
-                return ret_val;
+                return -7;
             }
             errno = 0;
             uint32_t tcp_max_connections = strtoumax(array_content_string, NULL, 10);
@@ -747,8 +736,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
             {
                 //error
                 syslog(LOG_ERR, "parsing config file max modbus connections failed: %s", strerror(errno));
-                ret_val = -8;
-                return ret_val;
+                return -8;
             }
             modbusDeviceConfig_p->uProt.tTcpConfig.maxModbusConnections = tcp_max_connections;
         }
@@ -768,14 +756,12 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         if (array_content_string == NULL)
         {
             syslog(LOG_ERR, "parsing config failed\n");
-            ret_val = -9;
-            return ret_val;
+            return -9;
         }
         if (strlen(array_content_string) >= PATH_MAX)
         {
             syslog(LOG_ERR, "parsing config failed, wrong parameter size for device path\n");
-            ret_val = -10;
-            return ret_val;
+            return -10;
         }
         strcpy(modbusDeviceConfig_p->uProt.tRtuConfig.sz8DeviceFilePath, array_content_string);		
                 
@@ -784,8 +770,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         if (array_content_string == NULL)
         {
             syslog(LOG_ERR, "parsing config failed\n");
-            ret_val = -11;
-            return ret_val;
+            return -11;
         }
         errno = 0;
         uint32_t rtu_baudrate = strtoumax(array_content_string, NULL, 10);
@@ -793,8 +778,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         {
                 //error
             syslog(LOG_ERR, "parsing config file baudrate failed: %s", strerror(errno));
-            ret_val = -12;
-            return ret_val;
+            return -12;
         }
         modbusDeviceConfig_p->uProt.tRtuConfig.i32uBaud = rtu_baudrate;
                 
@@ -803,8 +787,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         if (array_content_string == NULL)
         {
             syslog(LOG_ERR, "parsing config failed\n");
-            ret_val = -13;
-            return ret_val;
+            return -13;
         }
         if (strlen(array_content_string) > sizeof(modbusDeviceConfig_p->uProt.tRtuConfig.cParity))
         {
@@ -834,8 +817,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         if (array_content_string == NULL)
         {
             syslog(LOG_ERR, "parsing config failed\n");
-            ret_val = -15;
-            return ret_val;
+            return -15;
         }
         errno = 0;
         uint32_t databits_count = strtoumax(array_content_string, NULL, 10);
@@ -843,8 +825,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         {
                 //error
             syslog(LOG_ERR, "parsing config file number of databits for serial connection failed: %s", strerror(errno));
-            ret_val = -16;
-            return ret_val;
+            return -16;
         }
         modbusDeviceConfig_p->uProt.tRtuConfig.i8uDatabits = databits_count;
                 
@@ -853,8 +834,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         if (array_content_string == NULL)
         {
             syslog(LOG_ERR, "parsing config failed\n");
-            ret_val = -17;
-            return ret_val;
+            return -17;
         }
         errno = 0;
         uint32_t stopbits_count = strtoumax(array_content_string, NULL, 10);
@@ -862,8 +842,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         {
                 //error
             syslog(LOG_ERR, "parsing config file number of databits for serial connection failed: %s", strerror(errno));
-            ret_val = -16;
-            return ret_val;
+            return -16;
         }
         modbusDeviceConfig_p->uProt.tRtuConfig.i8uStopbits = stopbits_count;
                 
@@ -875,8 +854,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
             if (array_content_string == NULL)
             {
                 syslog(LOG_ERR, "parsing config failed\n");
-                ret_val = -17;
-                return ret_val;
+                return -17;
             }
             errno = 0;
             uint32_t modbus_address = strtoumax(array_content_string, NULL, 10);
@@ -884,8 +862,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
             {
                     //error
                 syslog(LOG_ERR, "parsing config file number of databits for serial connection failed: %s", strerror(errno));
-                ret_val = -16;
-                return ret_val;
+                return -16;
             }
             modbusDeviceConfig_p->uProt.tRtuConfig.u8DeviceModbusAddress = modbus_address;
         }		
@@ -893,8 +870,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
     else
     {
         syslog(LOG_ERR, "unknown modbus device type\n");
-        ret_val = -17;
-        return ret_val;		
+        return -17;		
     }
 
     return 0;
@@ -1259,9 +1235,11 @@ const char* get_modbus_action_matching_name_string_value(
     const char *action_parameter_prefix_and_identifier = NULL;
     struct json_object_iter iter;
         
-        
-    action_parameter_prefix_and_identifier =
+    if (action_parameter_prefix_p != NULL && action_identifier_p != NULL) 
+    {
+        action_parameter_prefix_and_identifier =
             calloc(strlen(action_parameter_prefix_p) + strlen(action_identifier_p) + 1, sizeof(char));
+    }
     if (action_parameter_prefix_and_identifier == NULL)
     {
         syslog(LOG_ERR, "parsing modbus configuration failed. Memory allocation failed.\n");
