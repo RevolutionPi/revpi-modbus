@@ -168,16 +168,15 @@ void *startTcpMasterThread(void *arg)
         
             while (1)
             {
-                int32_t ret_val_modbus_action = 0;
                 getNextEvent(&nextEvent, &eventListHead);
 
                 //check if reset status is set and reset status if neccessarry
-                ret_val_modbus_action = reset_modbus_action_status(
+                reset_modbus_action_status(
                     nextEvent.ptModbusAction->i32uResetStatusProcessImageByteOffset,
                     nextEvent.ptModbusAction->i8uResetStatusProcessImageBitOffset,
                     nextEvent.ptModbusAction->i32uStatusByteProcessImageOffset);
  
-                ret_val_modbus_action = reset_modbus_master_status(
+                reset_modbus_master_status(
                     psModbusConfiguration_l->tModbusDeviceConfig.i32uDeviceStatusResetByteProcessImageByteOffset,
                     psModbusConfiguration_l->tModbusDeviceConfig.i32uDeviceStatusByteProcessImageOffset);
 
@@ -219,7 +218,7 @@ void *startTcpMasterThread(void *arg)
                     syslog(LOG_ERR, "Set Modbus slave address for next command failed: %s\n", modbus_strerror(errno));
                 }
         
-                ret_val_modbus_action = processModbusAction(pModbusContext, &nextEvent, buffer);
+                int32_t ret_val_modbus_action = processModbusAction(pModbusContext, &nextEvent, buffer);
 
                 //store earliest next trigger time for next event
                 clock_gettime(CLOCK_MONOTONIC, &tv_current);
@@ -451,12 +450,11 @@ void *startRtuMasterThread(void *arg)
     
     while (1)
     {
-        int32_t ret_val_modbus_action = 0;
         getNextEvent(&nextEvent, &eventListHead);
 
 #if 0
         //check, if reset status is set for this action and reset status if neccessarry
-        ret_val_modbus_action = reset_modbus_action_status(
+        reset_modbus_action_status(
             nextEvent.ptModbusAction->i32uResetStatusProcessImageByteOffset,
             nextEvent.ptModbusAction->i8uResetStatusProcessImageBitOffset,
             nextEvent.ptModbusAction->i32uStatusByteProcessImageOffset);
@@ -474,7 +472,7 @@ void *startRtuMasterThread(void *arg)
         }
 #endif        
         
-        ret_val_modbus_action = reset_modbus_master_status(
+        reset_modbus_master_status(
             psModbusConfiguration_l->tModbusDeviceConfig.i32uDeviceStatusResetByteProcessImageByteOffset,
             psModbusConfiguration_l->tModbusDeviceConfig.i32uDeviceStatusByteProcessImageOffset);
 
@@ -515,7 +513,7 @@ void *startRtuMasterThread(void *arg)
             syslog(LOG_ERR, "Set Modbus slave address for next command failed: %s\n", modbus_strerror(errno));
         }
         
-        ret_val_modbus_action = processModbusAction(pModbusContext, &nextEvent, buffer);
+        int32_t ret_val_modbus_action = processModbusAction(pModbusContext, &nextEvent, buffer);
         
         //store earliest next trigger time for next event
         clock_gettime(CLOCK_MONOTONIC, &tv_current);

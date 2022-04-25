@@ -101,7 +101,7 @@ int32_t main(int32_t argc, char *argv[])
         if (modbusDevicesCount > 0)
         {
             for (i = 0; i < modbusDevicesCount; i++) {
-                pthread_cancel(pThreads[i]);            
+                pthread_cancel(pThreads[i]); // NOLINT is initialized if modbusDevicesCount > 0
             }
             free(pThreads);
 
