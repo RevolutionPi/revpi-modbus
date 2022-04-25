@@ -8,7 +8,7 @@
 #ifndef PIMODBUSSLAVE_H_
 #define PIMODBUSSLAVE_H_
 
-#include <sys/types.h>
+#include <stdint.h>
 
 typedef struct
 {

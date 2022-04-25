@@ -317,10 +317,7 @@ void *startRtuSlaveThread(void *arg)
         process_modbus_request(hdl.mb_slave, hdl.mbMapping, psModbusConfiguration_l);
     }
     
-    pthread_cleanup_pop(1);
-    printf("Quit the loop: %s\n", modbus_strerror(errno));
-    
-    return NULL;
+    pthread_cleanup_pop(1); // this makro closes the loop of pthread_cleanup_push
 }
 
 
