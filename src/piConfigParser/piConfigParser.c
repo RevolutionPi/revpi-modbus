@@ -23,11 +23,11 @@
 
 const char MODBUS_MASTER_ACTION_ID_KEY[]                        = "ActionId";
 const char MODBUS_MASTER_SLAVE_ADDRESS_KEY[]                    = "SlaveAddress";
-const char MODBUS_MASTER_FUNCTON_CODE_KEY[]		        = "FunctionCode";
-const char MODBUS_MASTER_REGISTER_ADDRESS_KEY[]			= "RegisterAddress";
-const char MODBUS_MASTER_QUANTITY_OF_REGISTERS_KEY[]	        = "QuantityOfRegisters";
-const char MODBUS_MASTER_ACTION_INTERVAL_KEY[]			= "ActionInterval";
-const char MODBUS_MASTER_PROCESS_IMAGE_VARIABLE_NAME_KEY[]	= "DeviceValue";
+const char MODBUS_MASTER_FUNCTON_CODE_KEY[]	                    = "FunctionCode";
+const char MODBUS_MASTER_REGISTER_ADDRESS_KEY[]	                = "RegisterAddress";
+const char MODBUS_MASTER_QUANTITY_OF_REGISTERS_KEY[]            = "QuantityOfRegisters";
+const char MODBUS_MASTER_ACTION_INTERVAL_KEY[]                  = "ActionInterval";
+const char MODBUS_MASTER_PROCESS_IMAGE_VARIABLE_NAME_KEY[]      = "DeviceValue";
 const char MODBUS_MASTER_ACTION_STATUS_BYTE[]                   = "ModbusActionStatus";
 const char MODBUS_MASTER_ACTION_STATUS_RESET[]                  = "ActionStatusReset";
 
@@ -42,6 +42,162 @@ const int MODBUS_MASTER_MASTER_STATUS_RESET_BYTE_OFFSET         = 173;
 TModbusSlaveConfiguration *tModbusSlaveConfig;
 static char *c8PiConfigData_g = NULL;
 
+
+// Error handling
+enum parsing_error
+{
+    ACTION_ADDRESS_WRONG_FORMAT = -100,
+    ACTION_DATA_SECTION_NOT_FOUND,
+    ACTION_FUNCTION_CODE_WRONG_FORMAT,
+    ACTION_ID_WRONG_FORMAT,
+    ACTION_INTERVALL_WRONG_FORMAT,
+    ACTION_REGISTER_ADDRESS_WRONG_FORMAT,
+    ACTION_REGISTER_QUANTITY_WRONG_FORMAT,
+    DEVICE_RESET_ENTRIES_NOT_FOUND,
+    DEVICES_SECTION_EMPTY,
+    DEVICES_SECTION_NOT_FOUND,
+    EXTEND_SECTION_NOT_FOUND,
+    GENERAL_EXCEPTION,
+    INPUT_PARAMETER_SECTION_NOT_FOUND,
+    INTERFACE_SECTION_NOT_FOUND,
+    LENGTH_POSITION_PARAMETER_NOT_FOUND,
+    LENGTH_POSITION_PARAMETER_WRONG_TYPE,
+    MAX_CONNECTIONS_LIMIT_EXCEEDED,
+    MAX_CONNECTIONS_NOT_FOUND,
+    OFFSET_POSITION_PARAMETER_NOT_FOUND,
+    OFFSET_POSITION_PARAMETER_WRONG_TYPE,
+    OUTPUT_PARAMETER_SECTION_NOT_FOUND,
+    PROCESS_IMAGE_OBJECT_EMPTY,
+    PROCESS_IMAGE_WRONG_TYPE,
+    PRODUCT_NAME_NOT_FOUND,
+    PRODUCT_TYPE_SECTION_EMPTY,
+    PRODUCT_TYPE_SECTION_NOT_FOUND,
+    RTU_BAUDRATE_NOT_FOUND,
+    RTU_BAUDRATE_WRONG_FORMAT,
+    RTU_DATABITS_NOT_FOUND,
+    RTU_DATABITS_SIZE,
+    RTU_DEVICE_PATH_LENGTH_EXCEEDED,
+    RTU_DEVICE_PATH_NOT_FOUND,
+    RTU_MODBUS_ADDRESS_NOT_FOUND,
+    RTU_MODBUS_ADDRESS_SIZE,
+    RTU_PARITY_LENGTH_EXCEEDED,
+    RTU_PARITY_NOT_FOUND,
+    RTU_PARITY_WRONG_FORMAT,
+    RTU_STOPBITS_NOT_FOUND,
+    RTU_STOPBITS_SIZE,
+    TCP_ADDRESS_NOT_FOUND,
+    TCP_ADDRESS_WRONG_FORMAT,
+    TCP_PORT_NOT_FOUND,
+    TCP_PORT_WRONG_FORMAT,
+    UNKNOWN_MODBUS_DEVICE,
+    SUCCESS = 0
+};
+
+/******************************************************************************/
+/** @ brief translates error codes of this module to printable string
+ *  
+ *	@param[in] error_code
+ *
+ *	@return constant character array
+ */
+/*****************************************************************************/
+const char* get_parsing_error_translation(int error_code)
+{
+    switch ((enum parsing_error)error_code)
+    {
+        case ACTION_ADDRESS_WRONG_FORMAT:
+            return "Action address has wrong format";
+        case ACTION_DATA_SECTION_NOT_FOUND:
+            return "Action data object not found";
+        case ACTION_FUNCTION_CODE_WRONG_FORMAT:
+            return "Action fuction code has wrong format";
+        case ACTION_ID_WRONG_FORMAT:
+            return "Action data object id has wrong format";
+        case ACTION_INTERVALL_WRONG_FORMAT:
+            return "Action intervall has wrong format";
+        case ACTION_REGISTER_ADDRESS_WRONG_FORMAT:
+            return "Action register address has wrong format";
+        case ACTION_REGISTER_QUANTITY_WRONG_FORMAT:
+            return "Action register quantity has wrong format";
+        case DEVICE_RESET_ENTRIES_NOT_FOUND:
+            return "Device reset object not found";
+        case DEVICES_SECTION_NOT_FOUND:
+            return "Device object not found";
+        case DEVICES_SECTION_EMPTY:
+            return "Device list empty";
+        case EXTEND_SECTION_NOT_FOUND:
+            return "Configuration object not found";
+        case GENERAL_EXCEPTION:
+            return "Unknown error";
+        case INPUT_PARAMETER_SECTION_NOT_FOUND:
+            return "Input parameter object not found";
+        case INTERFACE_SECTION_NOT_FOUND:
+            return "Interface object not found";
+        case LENGTH_POSITION_PARAMETER_NOT_FOUND:
+            return "Device position parameter not found";
+        case LENGTH_POSITION_PARAMETER_WRONG_TYPE:
+            return "Device position parameter has wrong type";
+        case MAX_CONNECTIONS_NOT_FOUND:
+            return "Max connections object not found";
+        case MAX_CONNECTIONS_LIMIT_EXCEEDED:
+            return "Limit of connections exceeded";
+        case OFFSET_POSITION_PARAMETER_NOT_FOUND:
+            return "Offset position parameter not found";
+        case OFFSET_POSITION_PARAMETER_WRONG_TYPE:
+            return "Offset position parameter has wrong type";
+        case OUTPUT_PARAMETER_SECTION_NOT_FOUND:
+            return "Output parameter object not found";
+        case PROCESS_IMAGE_OBJECT_EMPTY:
+            return "Process image object empty";
+        case PROCESS_IMAGE_WRONG_TYPE:
+            return "Process image image has wrong type";
+        case PRODUCT_NAME_NOT_FOUND:
+            return "Product type not found";
+        case PRODUCT_TYPE_SECTION_EMPTY:
+            return "Product name not found";
+        case PRODUCT_TYPE_SECTION_NOT_FOUND:
+            return "Product type empty";
+        case TCP_ADDRESS_NOT_FOUND:
+            return "IP address not found";
+        case TCP_ADDRESS_WRONG_FORMAT:
+            return "IP address has wrong format";
+        case TCP_PORT_NOT_FOUND:
+            return "TCP port not found";
+        case TCP_PORT_WRONG_FORMAT:
+            return "TCP port has wrong format";
+        case RTU_BAUDRATE_NOT_FOUND:
+            return "Baud rate for RTU connection not found";
+        case RTU_BAUDRATE_WRONG_FORMAT:
+            return "Baud rate for RTU connection has wrong format";
+        case RTU_DATABITS_NOT_FOUND:
+            return "Data bits for RTU connection not found";
+        case RTU_DATABITS_SIZE:
+            return "Data bits for RTU connection has wrong size";
+        case RTU_DEVICE_PATH_NOT_FOUND:
+            return "Device path for RTU connection not found";
+        case RTU_DEVICE_PATH_LENGTH_EXCEEDED:
+            return "Device path for RTU connection length exceeded";
+        case RTU_PARITY_LENGTH_EXCEEDED:
+            return "Parity for RTU connection length exceeded";
+        case RTU_PARITY_NOT_FOUND:
+            return "Parity for RTU connection not found";
+        case RTU_PARITY_WRONG_FORMAT:
+            return "Parity for RTU connection has wrong format";
+        case RTU_STOPBITS_NOT_FOUND:
+            return "Stop bits for RTU connection not found";
+        case RTU_STOPBITS_SIZE:
+            return "Stop bits for RTU connection has wrong size";
+        case RTU_MODBUS_ADDRESS_NOT_FOUND:
+            return "Modbus address for RTU connection not found";
+        case RTU_MODBUS_ADDRESS_SIZE:
+            return "Modbus address for RTU connection has wrong size";
+        case UNKNOWN_MODBUS_DEVICE:
+            return "Modbus device is unknown";
+        case SUCCESS:
+            return "Success";
+    }
+    return "Unknown error"; // i.e. GENERAL_EXCEPTION
+}
 
 
 /******************************************************************************/
@@ -111,7 +267,7 @@ char* read_config_file(void)
     config_file = fopen(PICONFIG_FILE, "r");
     if (config_file == NULL)
     {
-            // try old filename/location
+        // try old filename/location
         config_file = fopen(PICONFIG_FILE_WHEEZY, "r");
     }
 
@@ -181,11 +337,11 @@ int32_t parse_modbus_slave_device_process_image_config(json_object *pi_device_p,
     uint32_t u32_process_image_output_size = 0;
     int32_t successful = -1;
                                         
-                            //process image holding registers input data config
+    //process image holding registers input data config
     json_object *json_process_image_input_params = NULL;
     if (!(json_object_object_get_ex(pi_device_p, "inp", &json_process_image_input_params)))
     {
-        return -4;
+        return INPUT_PARAMETER_SECTION_NOT_FOUND;
     }
                 
     successful = get_device_process_image_parameter(json_process_image_input_params,
@@ -201,11 +357,11 @@ int32_t parse_modbus_slave_device_process_image_config(json_object *pi_device_p,
     modbusSlaveConfiguration_p->tModbusDataConfig.u16HoldingRegisters = u32_process_image_input_size / 2;
                                                 
                         
-            //process image output input registers data config
+    //process image output input registers data config
     json_object *json_process_image_output_params = NULL;
     if (!(json_object_object_get_ex(pi_device_p, "out", &json_process_image_output_params)))
     {
-        return -5;
+        return OUTPUT_PARAMETER_SECTION_NOT_FOUND;
     }
                                         
     successful = get_device_process_image_parameter(json_process_image_output_params,
@@ -220,8 +376,8 @@ int32_t parse_modbus_slave_device_process_image_config(json_object *pi_device_p,
     modbusSlaveConfiguration_p->tProcessImageConfig.u32InputRegistersOffset = u32_process_image_output_start_address + processImageDeviceOffset;	
     modbusSlaveConfiguration_p->tModbusDataConfig.u16InputRegisters = u32_process_image_output_size / 2;
                         
-            //config coils
-            //config discrete inputs			
+    //config coils
+    //config discrete inputs			
                         
     return 0;
 }
@@ -246,20 +402,20 @@ int32_t get_json_devices_array(const char* pc8_pi_config_data_p, struct array_li
     if (json_config == NULL)
     {
         syslog(LOG_ERR, "parsing config failed\n");
-        return -1;
+        return GENERAL_EXCEPTION;
     }
                 
     if (!(json_object_object_get_ex(json_config, "Devices", &json_devices)))
     {
         syslog(LOG_ERR, "parsing config failed, no devices found\n");
-        return -2;
+        return DEVICES_SECTION_NOT_FOUND;
     }
         
     *pp_devices_array_p = json_object_get_array(json_devices);
     if (*pp_devices_array_p == NULL)
     {
         syslog(LOG_ERR, "parsing config failed, no devices found\n");
-        return -3;		
+        return DEVICES_SECTION_EMPTY;		
     }
     return 0;
 }
@@ -282,12 +438,12 @@ int32_t get_device_product_type(json_object *pi_device, const char **ppc8_produc
     if (!(json_object_object_get_ex(pi_device, "productType", &json_pi_product_type)))
     {
         syslog(LOG_ERR, "parsing device config failed\n");
-        return -1;			
+        return PRODUCT_TYPE_SECTION_EMPTY;			
     }
     if (json_object_get_type(json_pi_product_type) != json_type_string)
     {
         syslog(LOG_ERR, "parsing device config failed\n");
-        return -2;			
+        return PRODUCT_TYPE_SECTION_EMPTY;			
     }
     *ppc8_productType = json_object_get_string(json_pi_product_type);
     return 0;
@@ -319,13 +475,13 @@ int32_t parse_modbus_master_config_data(const char* pc8_pi_config_data_p, struct
         if (get_device_product_type(json_pi_device, &productType) < 0)
         {
             syslog(LOG_ERR, "No device product name found\n");
-            return -1;
+            return PRODUCT_NAME_NOT_FOUND;
         }
 
         if ((memcmp(productType, MODBUS_MASTER_TCP_PI_PRODUCT_TYPE, strlen(productType)) == 0) ||
                 (memcmp(productType, MODBUS_MASTER_RTU_PI_PRODUCT_TYPE, strlen(productType)) == 0))
         {
-                //parse this device
+            //parse this device
             struct TMBMasterConfigEntry *nextConfig = calloc(1, sizeof(struct TMBMasterConfigEntry));
             if (nextConfig == NULL)
             {
@@ -357,12 +513,12 @@ int32_t parse_modbus_master_config_data(const char* pc8_pi_config_data_p, struct
             if (!(json_object_object_get_ex(json_pi_device, "extend", &json_config_extend)))
             {
                 syslog(LOG_ERR, "parsing config extend failed, no config found\n");
-                return -2;
+                return EXTEND_SECTION_NOT_FOUND;
             }
             if (!(json_object_object_get_ex(json_config_extend, "deviceMisc", &json_modbus_master_status)))
             {
                 syslog(LOG_ERR, "parsing config data failed, no device reset entries found \n");
-                return -3;
+                return DEVICE_RESET_ENTRIES_NOT_FOUND;
             }
 #if 1
             uint32_t byte_offset = 0;
@@ -434,7 +590,7 @@ int32_t parse_modbus_slaves_config_data(const char* pc8_pi_config_data_p, struct
     if (get_json_devices_array(pc8_pi_config_data_p, &devices_array) < 0)
     {
         syslog(LOG_ERR, "No devices found in config file\n");
-        return -1;
+        return DEVICES_SECTION_EMPTY;
     }
         
     //search for matching device types
@@ -446,13 +602,13 @@ int32_t parse_modbus_slaves_config_data(const char* pc8_pi_config_data_p, struct
         if (get_device_product_type(pi_device, &productType) < 0)
         {
             syslog(LOG_ERR, "No device product name found\n");
-            return -1;
+            return PRODUCT_NAME_NOT_FOUND;
         }
                 
         if ((memcmp(productType, MODBUS_SLAVE_TCP_PI_PRODUCT_TYPE, strlen(productType)) == 0) ||
                 (memcmp(productType, MODBUS_SLAVE_RTU_PI_PRODUCT_TYPE, strlen(productType)) == 0))
         {
-                //parse this device
+            //parse this device
             struct TMBSlaveConfigEntry *nextConfig = calloc(1, sizeof(struct TMBSlaveConfigEntry));
             if (nextConfig == NULL)
             {
@@ -484,7 +640,7 @@ int32_t parse_modbus_slaves_config_data(const char* pc8_pi_config_data_p, struct
 /** @ brief parses the given pi process image json config data section
  *  
  *	@param[in] json_process_image_object_p pointer to json object which contains
- *			   the configuration (e.g. Devices.[i].inp or Devices.[i].out)
+ *			   the configuration (e.g. Devices/.[i].inp or Devices.[i].out)
  *	@param[out] u32_relative_process_image_offset_p the relative process image offset
  *				of the specified json process image object
  *	@param[out] u32_process_image_length_p length of this process image section in bytes
@@ -500,32 +656,32 @@ int32_t get_device_process_image_parameter(json_object *json_process_image_objec
         
     if (json_object_get_type(json_process_image_object_p) != json_type_object)
     {
-        return -1;
+        return PROCESS_IMAGE_WRONG_TYPE;
     }
         
     json_object_object_foreach(json_process_image_object_p, key, val)
     {
         (void)key;
         
-                //find entry with the smallest relative offset(fourth value in array)
-                //find entry with the highest relative offset(fourth value in array)
+        // find entry with the smallest relative offset(fourth value in array)
+        // find entry with the highest relative offset(fourth value in array)
         struct array_list *input_data_array = json_object_get_array(val);
         if (input_data_array == NULL)
         {
-            return -2;
+            return PROCESS_IMAGE_OBJECT_EMPTY;
         }
                 
         json_object *json_single_input_param = (json_object*)array_list_get_idx(input_data_array, RELATIVE_PROCESS_IMAGE_VARIABLE_BYTE_OFFSET_ARRAY_POSITION);
         if (json_single_input_param == NULL)
         {
-            return -3;
+            return OFFSET_POSITION_PARAMETER_NOT_FOUND;
         }
                 
         const char *pst8_relative_input_offset = NULL;
         uint32_t u32_relative_process_image_offset = 0;
         if (json_type_string != json_object_get_type(json_single_input_param))
         {
-            return -4;
+            return OFFSET_POSITION_PARAMETER_WRONG_TYPE;
         }
                 
         errno = 0;
@@ -533,9 +689,9 @@ int32_t get_device_process_image_parameter(json_object *json_process_image_objec
         u32_relative_process_image_offset = strtoumax(pst8_relative_input_offset, NULL, 10);
         if (errno != 0)
         {
-                //error
+            //error
             syslog(LOG_ERR, "parsing config file failed: %s", strerror(errno));
-            return -5;
+            return GENERAL_EXCEPTION;
         }
                 
         //start offset
@@ -550,14 +706,14 @@ int32_t get_device_process_image_parameter(json_object *json_process_image_objec
             json_highest_offset_variable_size = (json_object*)array_list_get_idx(input_data_array, PROCESS_IMAGE_VARIABLE_BIT_LENGTH_ARRAY_POSITION);
             if (json_single_input_param == NULL)
             {
-                return -6;
+                return OFFSET_POSITION_PARAMETER_NOT_FOUND;
             }
         }
     }
     //add variable data length to total length of process image input size
     if (json_type_string != json_object_get_type(json_highest_offset_variable_size))
     {
-        return -7;
+        return OFFSET_POSITION_PARAMETER_WRONG_TYPE;
     }
         
     errno = 0;
@@ -565,9 +721,9 @@ int32_t get_device_process_image_parameter(json_object *json_process_image_objec
     uint32_t u32_last_variable_bit_size = strtoumax(pst8_last_variable_bit_size, NULL, 10);
     if (errno != 0)
     {
-            //error
+        //error
         syslog(LOG_ERR, "parsing config file failed: %s", strerror(errno));
-        return -8;
+        return GENERAL_EXCEPTION;
     }
         
     u32_process_image_size = u32_process_image_size + (u32_last_variable_bit_size / 8) - u32_process_image_start_address;
@@ -643,24 +799,24 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
     if (!(json_object_object_get_ex(json_device_object_p, "productType", &json_pi_product_type)))
     {
         syslog(LOG_ERR, "parsing device config failed\n");
-        return -1;
+        return PRODUCT_TYPE_SECTION_NOT_FOUND;
     }
     if (json_object_get_type(json_pi_product_type) != json_type_string)
     {
         syslog(LOG_ERR, "parsing device config failed\n");
-        return -2;
+        return PRODUCT_TYPE_SECTION_EMPTY;
     }
     productType = json_object_get_string(json_pi_product_type);
     json_object *json_modbus_config_parameters = NULL;
     if (!(json_object_object_get_ex(json_device_object_p, "mem", &json_modbus_config_parameters)))
     {
         syslog(LOG_ERR, "parsing device config failed\n");
-        return -3;
+        return INTERFACE_SECTION_NOT_FOUND;
     }
     //modbus tcp
     if (memcmp(productType, MODBUS_MASTER_TCP_PI_PRODUCT_TYPE, strlen(productType)) == 0)
     {
-            //set TCP in configuration
+        //set TCP in configuration
         modbusDeviceConfig_p->eProtocol = eProtTCP;
         const char *array_content_string = NULL;
                 
@@ -669,12 +825,12 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         if (array_content_string == NULL)
         {
             syslog(LOG_ERR, "parsing config failed\n");
-            return -3;
+            return TCP_ADDRESS_NOT_FOUND;
         }
         if ((strlen(array_content_string)) >= (INET_ADDRSTRLEN))
         {
             syslog(LOG_ERR, "parsing config failed, wrong parameter size for ip address\n");
-            return -4;
+            return TCP_ADDRESS_WRONG_FORMAT;
         }
         strcpy(modbusDeviceConfig_p->uProt.tTcpConfig.szTcpIpAddress, array_content_string);		
                 
@@ -683,15 +839,15 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         if (array_content_string == NULL)
         {
             syslog(LOG_ERR, "parsing config failed\n");
-            return -5;
+            return TCP_PORT_NOT_FOUND;
         }
         errno = 0;
         uint32_t tcp_port = strtoumax(array_content_string, NULL, 10);
         if ((errno != 0) || (tcp_port > USHRT_MAX))
         {
-                //error
+            //error
             syslog(LOG_ERR, "parsing config file tcp port failed: %s", strerror(errno));
-            return -6;
+            return TCP_PORT_WRONG_FORMAT;
         }
         modbusDeviceConfig_p->uProt.tTcpConfig.i32uPort = tcp_port;
     }
@@ -709,26 +865,26 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         if (array_content_string == NULL)
         {
             syslog(LOG_ERR, "parsing config failed\n");
-            return -5;
+            return TCP_PORT_NOT_FOUND;
         }
         errno = 0;
         uint32_t tcp_port = strtoumax(array_content_string, NULL, 10);
         if ((errno != 0) || (tcp_port > USHRT_MAX))
         {
-                //error
+            //error
             syslog(LOG_ERR, "parsing config file tcp port failed: %s", strerror(errno));
-            return -6;
+            return TCP_PORT_WRONG_FORMAT;
         }
         modbusDeviceConfig_p->uProt.tTcpConfig.i32uPort = tcp_port;
                 
         if (memcmp(productType, MODBUS_SLAVE_TCP_PI_PRODUCT_TYPE, strlen(productType)) == 0)
         {
-                //set max modbus/tcp connections
+            //set max modbus/tcp connections
             array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_SLAVE_TCP_JSON_KEY_TCP_MAX_CONNECTIONS);
             if (array_content_string == NULL)
             {
                 syslog(LOG_ERR, "parsing config failed\n");
-                return -7;
+                return MAX_CONNECTIONS_NOT_FOUND;
             }
             errno = 0;
             uint32_t tcp_max_connections = strtoumax(array_content_string, NULL, 10);
@@ -736,7 +892,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
             {
                 //error
                 syslog(LOG_ERR, "parsing config file max modbus connections failed: %s", strerror(errno));
-                return -8;
+                return MAX_CONNECTIONS_LIMIT_EXCEEDED;
             }
             modbusDeviceConfig_p->uProt.tTcpConfig.maxModbusConnections = tcp_max_connections;
         }
@@ -747,7 +903,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
                     || (memcmp(productType, MODBUS_MASTER_RTU_PI_PRODUCT_TYPE, strlen(productType)) == 0))
     {
                 
-            //set RTU in configuration
+        //set RTU in configuration
         modbusDeviceConfig_p->eProtocol = eProtRTU;
         const char* array_content_string = NULL;
                 
@@ -756,12 +912,12 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         if (array_content_string == NULL)
         {
             syslog(LOG_ERR, "parsing config failed\n");
-            return -9;
+            return RTU_DEVICE_PATH_NOT_FOUND;
         }
         if (strlen(array_content_string) >= PATH_MAX)
         {
             syslog(LOG_ERR, "parsing config failed, wrong parameter size for device path\n");
-            return -10;
+            return RTU_DEVICE_PATH_LENGTH_EXCEEDED;
         }
         strcpy(modbusDeviceConfig_p->uProt.tRtuConfig.sz8DeviceFilePath, array_content_string);		
                 
@@ -770,15 +926,15 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         if (array_content_string == NULL)
         {
             syslog(LOG_ERR, "parsing config failed\n");
-            return -11;
+            return RTU_BAUDRATE_NOT_FOUND;
         }
         errno = 0;
         uint32_t rtu_baudrate = strtoumax(array_content_string, NULL, 10);
         if (errno != 0) 
         {
-                //error
+            //error
             syslog(LOG_ERR, "parsing config file baudrate failed: %s", strerror(errno));
-            return -12;
+            return RTU_BAUDRATE_WRONG_FORMAT;
         }
         modbusDeviceConfig_p->uProt.tRtuConfig.i32uBaud = rtu_baudrate;
                 
@@ -787,12 +943,12 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         if (array_content_string == NULL)
         {
             syslog(LOG_ERR, "parsing config failed\n");
-            return -13;
+            return RTU_PARITY_NOT_FOUND;
         }
         if (strlen(array_content_string) > sizeof(modbusDeviceConfig_p->uProt.tRtuConfig.cParity))
         {
             syslog(LOG_ERR, "parsing config failed, wrong parameter size for parity\n");
-            return -14;
+            return RTU_PARITY_LENGTH_EXCEEDED;
         }
         if (array_content_string[0] == MODBUS_SLAVE_RTU_JSON_PARITY_VALUE_EVEN)
         {
@@ -809,7 +965,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         else
         {
             syslog(LOG_ERR, "parsing config failed, unknown parameter value for parity\n");
-            return -15;
+            return RTU_PARITY_WRONG_FORMAT;
         }
                 
         //set number of databits for serial connection
@@ -817,15 +973,15 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         if (array_content_string == NULL)
         {
             syslog(LOG_ERR, "parsing config failed\n");
-            return -15;
+            return RTU_DATABITS_NOT_FOUND;
         }
         errno = 0;
         uint32_t databits_count = strtoumax(array_content_string, NULL, 10);
         if ((errno != 0) || (databits_count < MODBUS_RTU_MIN_DATABITS) || (databits_count > MODBUS_RTU_MAX_DATABITS))
         {
-                //error
+            //error
             syslog(LOG_ERR, "parsing config file number of databits for serial connection failed: %s", strerror(errno));
-            return -16;
+            return RTU_DATABITS_SIZE;
         }
         modbusDeviceConfig_p->uProt.tRtuConfig.i8uDatabits = databits_count;
                 
@@ -834,35 +990,35 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
         if (array_content_string == NULL)
         {
             syslog(LOG_ERR, "parsing config failed\n");
-            return -17;
+            return RTU_STOPBITS_NOT_FOUND;
         }
         errno = 0;
         uint32_t stopbits_count = strtoumax(array_content_string, NULL, 10);
         if ((errno != 0) || (stopbits_count < MODBUS_RTU_MIN_STOPBITS) || (stopbits_count > MODBUS_RTU_MAX_STOPBITS))
         {
-                //error
+            //error
             syslog(LOG_ERR, "parsing config file number of databits for serial connection failed: %s", strerror(errno));
-            return -16;
+            return RTU_STOPBITS_SIZE;
         }
         modbusDeviceConfig_p->uProt.tRtuConfig.i8uStopbits = stopbits_count;
                 
                 
         if (memcmp(productType, MODBUS_SLAVE_RTU_PI_PRODUCT_TYPE, strlen(productType)) == 0)
         {
-                //set modbus address
+            //set modbus address
             array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_SLAVE_RTU_MODBUS_ADDRESS);
             if (array_content_string == NULL)
             {
                 syslog(LOG_ERR, "parsing config failed\n");
-                return -17;
+                return RTU_MODBUS_ADDRESS_NOT_FOUND;
             }
             errno = 0;
             uint32_t modbus_address = strtoumax(array_content_string, NULL, 10);
             if ((errno != 0) || (modbus_address > CHAR_MAX))
             {
-                    //error
+                //error
                 syslog(LOG_ERR, "parsing config file number of databits for serial connection failed: %s", strerror(errno));
-                return -16;
+                return RTU_MODBUS_ADDRESS_SIZE;
             }
             modbusDeviceConfig_p->uProt.tRtuConfig.u8DeviceModbusAddress = modbus_address;
         }		
@@ -870,7 +1026,7 @@ int32_t parse_device_modbus_configuration(json_object *json_device_object_p, TMo
     else
     {
         syslog(LOG_ERR, "unknown modbus device type\n");
-        return -17;		
+        return UNKNOWN_MODBUS_DEVICE;		
     }
 
     return 0;
@@ -914,24 +1070,24 @@ int32_t parse_modbus_master_action_list(json_object *json_pi_device_p, struct TM
     if (!(json_object_object_get_ex(json_pi_device_p, "extend", &json_config_extend)))
     {
         syslog(LOG_ERR, "parsing config extend failed, no config found\n");
-        return -2;
+        return EXTEND_SECTION_NOT_FOUND;
     }
     if (!(json_object_object_get_ex(json_config_extend, "data", &json_modbus_actions)))
     {
         syslog(LOG_ERR, "parsing config data failed, no modbusActions found\n");
-        return -2;
+        return ACTION_DATA_SECTION_NOT_FOUND;
     }
         
         
     json_object_object_foreachC(json_modbus_actions, iter)
     {
-            //find the modbus action parameters which names starts with 'ActionId'
+        //find the modbus action parameters which names starts with 'ActionId'
         if (memcmp(MODBUS_MASTER_ACTION_ID_KEY, iter.key, (sizeof(MODBUS_MASTER_ACTION_ID_KEY) / sizeof(char))-1) == 0)
         {
-                //get the modbus action parameters identifier for this action id
-                //which is identical for all modbus action parameters of this modbus action
-                //The modbus action parameters identifier is the char sequence between
-                //the first and the second underscore in the json name (tag)
+            //get the modbus action parameters identifier for this action id
+            //which is identical for all modbus action parameters of this modbus action
+            //The modbus action parameters identifier is the char sequence between
+            //the first and the second underscore in the json name (tag)
             regex_t regex;
             int rc = regcomp(&regex, "_([^_]+)_", REG_EXTENDED);
             if (rc != 0)
@@ -954,7 +1110,7 @@ int32_t parse_modbus_master_action_list(json_object *json_pi_device_p, struct TM
                 {
                     free((void*)action_parameters_identifier);
                 }		
-                return -1;
+                return GENERAL_EXCEPTION;
             }
                         
             //set actionId
@@ -973,7 +1129,7 @@ int32_t parse_modbus_master_action_list(json_object *json_pi_device_p, struct TM
             if (errno != 0)
             {
                 syslog(LOG_ERR, "parsing modbus action list failed. Parsing value failed\n");
-                return -2;
+                return ACTION_ID_WRONG_FORMAT;
             }
             assert((actionID > 0) && (actionID < INT32_MAX));  //check min 1, max INT32_MAX
             nextAction->modbusAction.i16uActionID = actionID;		
@@ -994,7 +1150,7 @@ int32_t parse_modbus_master_action_list(json_object *json_pi_device_p, struct TM
             if (errno != 0)
             {
                 syslog(LOG_ERR, "parsing modbus action list failed. Parsing value failed\n");
-                return -3;
+                return ACTION_ADDRESS_WRONG_FORMAT;
             }
             //assert(slave_address < 248);     //see modbus station address specifications, '0' for broadcast
             nextAction->modbusAction.i8uSlaveAddress = slave_address;
@@ -1016,7 +1172,7 @@ int32_t parse_modbus_master_action_list(json_object *json_pi_device_p, struct TM
             if (errno != 0)
             {
                 syslog(LOG_ERR, "parsing modbus action list failed. Parsing value failed\n");
-                return -4;
+                return ACTION_FUNCTION_CODE_WRONG_FORMAT;
             }
             assert((modbus_function_code >= eREAD_COILS) && (modbus_function_code < eWRITE_AND_READ_REGISTERS));
             nextAction->modbusAction.eFunctionCode = (EModbusFunction)modbus_function_code;	
@@ -1038,7 +1194,7 @@ int32_t parse_modbus_master_action_list(json_object *json_pi_device_p, struct TM
             if (errno != 0)
             {
                 syslog(LOG_ERR, "parsing modbus action list failed. Parsing value failed\n");
-                return -5;
+                return ACTION_REGISTER_ADDRESS_WRONG_FORMAT;
             }
             assert((register_address > 0) && (register_address < 0x10000));  //check min/max register address
             nextAction->modbusAction.i32uStartRegister = register_address;
@@ -1060,7 +1216,7 @@ int32_t parse_modbus_master_action_list(json_object *json_pi_device_p, struct TM
             if (errno != 0)
             {
                 syslog(LOG_ERR, "parsing modbus action list failed. Parsing value failed\n");
-                return -6;
+                return ACTION_REGISTER_QUANTITY_WRONG_FORMAT;
             }
 
             if (quantity_of_registers > MAX_REGISTER_SIZE_PER_ACTION)
@@ -1091,7 +1247,7 @@ int32_t parse_modbus_master_action_list(json_object *json_pi_device_p, struct TM
             if (errno != 0)
             {
                 syslog(LOG_ERR, "parsing modbus action list failed. Parsing value failed\n");
-                return -7;
+                return ACTION_INTERVALL_WRONG_FORMAT;
             }
             assert((action_interval > 0) && (action_interval <= (1000 * 60 * 30)));  //check min 1 ms, max 0.5h = 1800000ms
             nextAction->modbusAction.i32uInterval_us = action_interval * 1000; //msec to usec
@@ -1272,9 +1428,6 @@ const char* get_modbus_action_matching_name_string_value(
 }
 
 
-
-
-
 /*****************************************************************************/
 /** @ brief search for specified json name (tag) in a config.rsc variable section (inp, out)
  *          and returns the corresponding values for absolute byte and bit offset as int
@@ -1302,14 +1455,14 @@ int32_t get_variable_parameters(json_object *json_pi_device_p,
     if (device_pi_process_image_offset < 0)
     {
         syslog(LOG_ERR, "parsing parameter config failed\n");
-        return -2;	
+        return OFFSET_POSITION_PARAMETER_WRONG_TYPE;	
     }
         
     //search in json block "inp"
     if (!(json_object_object_get_ex(json_pi_device_p, "inp", &json_pi_inp_out)))
     {
         syslog(LOG_ERR, "parsing input parameter config failed\n");
-        return -3;			
+        return INPUT_PARAMETER_SECTION_NOT_FOUND;			
     }
         
     int32_t rc1 = get_variable_relative_offsets(json_pi_inp_out,
@@ -1317,11 +1470,11 @@ int32_t get_variable_parameters(json_object *json_pi_device_p,
         byte_offset_p,
         bit_offset_p);
         
-        //search in json block "out"
+    //search in json block "out"
     if (!(json_object_object_get_ex(json_pi_device_p, "out", &json_pi_inp_out)))
     {
         syslog(LOG_ERR, "parsing output parameter config failed\n");
-        return -4;			
+        return OUTPUT_PARAMETER_SECTION_NOT_FOUND;			
     }
         
     int32_t rc2 = get_variable_relative_offsets(json_pi_inp_out,
@@ -1331,7 +1484,7 @@ int32_t get_variable_parameters(json_object *json_pi_device_p,
         
     if ((rc1 < 0) && (rc2 < 0))
     {
-        return -1;
+        return GENERAL_EXCEPTION;
     }
     else
     {
@@ -1373,7 +1526,7 @@ int32_t get_variable_relative_offsets(json_object *json_in_out_section_p,
         if ((strlen(variable_name) == strlen(json_parameter_name_p)) &&
                 (memcmp(json_parameter_name_p, variable_name, strlen(json_parameter_name_p)) == 0))
         {
-                //get byte offset
+            //get byte offset
             json_object *json_byte_offset = (json_object*)array_list_get_idx(input_data_array, RELATIVE_PROCESS_IMAGE_VARIABLE_BYTE_OFFSET_ARRAY_POSITION);
             if (json_object_is_type(json_byte_offset, json_type_string) < 0)
             {
@@ -1385,9 +1538,9 @@ int32_t get_variable_relative_offsets(json_object *json_in_out_section_p,
             uint32_t u32Byte_offset = strtoumax(sz8Byte_offset, NULL, 10);
             if (errno != 0)
             {
-                    //error
+                //error
                 syslog(LOG_ERR, "parsing config file process variable byte offset failed: %s", strerror(errno));
-                return -4;
+                return OFFSET_POSITION_PARAMETER_WRONG_TYPE;
             }
             *byte_offset_p = u32Byte_offset;
                         
@@ -1403,16 +1556,16 @@ int32_t get_variable_relative_offsets(json_object *json_in_out_section_p,
             uint32_t u32bit_offset = strtoumax(sz8bit_offset, NULL, 10);
             if (errno != 0)
             {
-                    //error
+                //error
                 syslog(LOG_ERR, "parsing config file process variable bit offset failed: %s", strerror(errno));
-                return -5;
+                return OFFSET_POSITION_PARAMETER_WRONG_TYPE;
             }
             *bit_offset_p = u32bit_offset;
             return 0;
         }
 
     }
-    return -1;
+    return GENERAL_EXCEPTION;
 }
 
 
@@ -1430,22 +1583,22 @@ int32_t get_process_image_device_offset(json_object *json_pi_device_p)
 {
     json_object *json_device_pi_process_image_offset = NULL;
     int32_t device_pi_process_image_offset = -1;
-    if (!(json_object_object_get_ex(json_pi_device_p, "offset", &json_device_pi_process_image_offset)))
+    if (!(json_object_object_get_ex(json_pi_device_p, "/", &json_device_pi_process_image_offset)))
     {
         syslog(LOG_ERR, "parsing device config offset parameter failed\n");
-        return -1;			
+        return OFFSET_POSITION_PARAMETER_NOT_FOUND;			
     }
     if (json_object_is_type(json_device_pi_process_image_offset, json_type_int) < 0)
     {
         syslog(LOG_ERR, "parsing device config offset parameter failed\n");
-        return -2;
+        return OFFSET_POSITION_PARAMETER_WRONG_TYPE;
     }
     errno = 0;
     device_pi_process_image_offset = json_object_get_int(json_device_pi_process_image_offset);
     if (errno != 0)
     {
         syslog(LOG_ERR, "parsing config file failed: %s", strerror(errno));
-        return -3;
+        return OFFSET_POSITION_PARAMETER_WRONG_TYPE;
     }
         
     return device_pi_process_image_offset;
