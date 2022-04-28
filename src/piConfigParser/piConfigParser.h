@@ -77,6 +77,5 @@ const char* get_modbus_action_matching_name_string_value(
 	struct json_object *json_modbus_actions_p,
 	const char* action_parameter_prefix_p,
 	const char* action_identifier_p);
-const char* get_parsing_error_translation(int error_code);
 
 #endif /*PI_CONFIG_PARSER_H_*/
