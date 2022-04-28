@@ -49,33 +49,7 @@
 
 void get_slave_device_config_list(struct TMBSlaveConfHead *p_mbSlaveConfHead_p);
 void get_master_device_config_list(struct TMBMasterConfHead *p_mbMasterConfHead_p);
-char* read_config_file(void);
 void free_config_buffer(void);
-int32_t get_json_devices_array(const char* pc8_pi_config_data_p, struct array_list **pp_devices_array_p);
-int32_t parse_modbus_slaves_config_data(const char* pc8_pi_config_data_p, struct TMBSlaveConfHead *p_mbSlaveConfHead_p);
-int32_t parse_modbus_master_config_data(const char* pc8_pi_config_data_p, struct TMBMasterConfHead *p_mbMasterConfHead_p);
 void free_modbus_master_config_data(struct TMBMasterConfHead *p_mbMasterConfHead_p);
-int32_t parse_device_modbus_configuration(json_object *json_device_parameter_object_p, TModbusDeviceConfiguration* modbusDeviceConfig_p);
-int32_t parse_modbus_master_action_list(json_object *json_pi_device_p, struct TMBActionListHead *tModbusActionListHead_p);
-int32_t parse_modbus_slave_device_process_image_config(json_object *pi_device_p, TModbusSlaveConfiguration* modbusSlaveConfiguration_p);
-int32_t get_device_product_type(json_object *pi_device, const char **ppc8_productType);
-int32_t get_variable_parameters(json_object *json_pi_device_p,
-	const char* json_parameter_name,
-	uint32_t *byte_offset_p,
-	uint32_t *bit_offset_p);
-int32_t get_variable_relative_offsets(json_object *json_in_out_section,
-	const char* json_parameter_name,
-	uint32_t *byte_offset_p,
-	uint32_t *bit_offset_p);
-int32_t get_process_image_device_offset(json_object *json_pi_device_p);
-
-int32_t get_device_process_image_parameter(json_object *json_process_image_object_p, uint32_t* u32_absolute_process_image_offset_p, uint32_t* u32_process_image_length_p);
-
-int32_t get_device_modbus_configuration(json_object *json_device_parameter_object_p, TModbusDeviceConfiguration* modbusDeviceConfig_p);
-const char* get_device_string_parameter(json_object *json_device_config_parameters_p, const char* json_key_p);
-const char* get_modbus_action_matching_name_string_value(
-	struct json_object *json_modbus_actions_p,
-	const char* action_parameter_prefix_p,
-	const char* action_identifier_p);
 
 #endif /*PI_CONFIG_PARSER_H_*/
