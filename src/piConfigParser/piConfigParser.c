@@ -1126,13 +1126,7 @@ int32_t parse_modbus_master_action_list(json_object *json_pi_device_p, struct TM
             //The modbus action parameters identifier is the char sequence between
             //the first and the second underscore in the json name (tag)
             regex_t regex;
-            int rc = regcomp(&regex, "_([^_]+)_", REG_EXTENDED);
-            if (rc != 0)
-            {
-                syslog(LOG_ERR, "Could not compile regex\n");
-                // FIXME: This cannot work if we use the outcome
-                // FIXME: This is a static result and should not change after development
-            }
+            regcomp(&regex, "_([^_]+)_", REG_EXTENDED);
             regmatch_t matches[1];
             if (regexec(&regex, iter.key, sizeof(matches) / sizeof(regmatch_t), matches, 0) == 0)
             {
@@ -1140,7 +1134,7 @@ int32_t parse_modbus_master_action_list(json_object *json_pi_device_p, struct TM
                 memcpy((void*)action_parameters_identifier, (void*)&(iter.key[matches[0].rm_so]), (matches[0].rm_eo - matches[0].rm_so));
             }
 
-                                    //allocate memory for next modbus action
+            //allocate memory for next modbus action
             nextAction = calloc(1, sizeof(struct TMBActionEntry));
             if (nextAction == NULL)
             {
