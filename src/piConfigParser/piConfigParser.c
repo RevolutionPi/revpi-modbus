@@ -237,7 +237,7 @@ static const char* get_parsing_error_translation(parsing_error error_code)
 /*****************************************************************************/
 static void print_err(parsing_error error_code)
 {
-    syslog(LOG_ERR, "parsing config file failed: %s\n", get_parsing_error_translation(error_code));
+    syslog(LOG_ERR, "Parsing config file failed: %s\n", get_parsing_error_translation(error_code));
 }
 
 
@@ -700,7 +700,7 @@ int32_t parse_modbus_slaves_config_data(const char* pc8_pi_config_data_p, struct
 /** @ brief parses the given pi process image json config data section
  *
  *	@param[in] json_process_image_object_p pointer to json object which contains
- *			   the configuration (e.g. Devices/.[i].inp or Devices.[i].out)
+ *			   the configuration (e.g. Devices.[i].inp or Devices.[i].out)
  *	@param[out] u32_relative_process_image_offset_p the relative process image offset
  *				of the specified json process image object
  *	@param[out] u32_process_image_length_p length of this process image section in bytes
@@ -1323,7 +1323,7 @@ int32_t parse_modbus_master_action_list(json_object *json_pi_device_p, struct TM
             }
             //search for variable name in inp and out list of device
             success = get_variable_parameters(json_pi_device_p, val_str_buffer, &process_image_byte_offset, &process_image_bit_offset);
-            if (success!= 0)
+            if (success != 0)
             {
                 print_err(success);
                 free((void*)nextAction);
@@ -1596,7 +1596,7 @@ int32_t get_process_image_device_offset(json_object *json_pi_device_p)
 {
     json_object *json_device_pi_process_image_offset = NULL;
     int32_t device_pi_process_image_offset = -1;
-    if (!(json_object_object_get_ex(json_pi_device_p, "/", &json_device_pi_process_image_offset)))
+    if (!(json_object_object_get_ex(json_pi_device_p, "offset", &json_device_pi_process_image_offset)))
     {
         return OFFSET_POSITION_PARAMETER_NOT_FOUND;
     }
