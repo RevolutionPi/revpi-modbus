@@ -1,0 +1,26 @@
+name: Clang-Tidy docker runner
+
+on: [push]
+
+jobs:
+    test:
+        name: Run static code analysis
+        runs-on: [self-hosted, tests-only]
+        container:
+            image: ghcr.io/revolutionpi/clang-tidy-analysis:0.3
+            credentials:
+                username: ${{ github.actor }}
+                password: ${{ secrets.CONTAINER_READ }}
+        steps:
+
+        # workaround github runner environment pollution
+        - name: Clean the workspace
+          run: rm -rf $GITHUB_WORKSPACE/*
+ 
+        - uses: actions/checkout@v3
+          with:
+            submodules: recursive
+
+        - name: Test with clang-tidy
+          run: clang-tidy src/*.c src/*.h -- -IpiControl -std=c99
+
