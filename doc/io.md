@@ -338,7 +338,7 @@ which could and should be hidden away behind an interface.
 ![Dependencies of piControl](dep_picontrol.png)
 
 ### Modbus protocol
-The protocol is provided by [libmodbus](https://libmodbus.org/docs/v3.1.7/modbus_mapping_new.html).
+The protocol is provided by [libmodbus](https://libmodbus.org/).
 The functions aren't accessed through a defined interface but forwarded
 by `ComAndDataProcessor.h` into two files (for now) and called directly. This causes issues with changes in
 libmodbus' API, apparently already an issue in the past and handled by the pre-processor via
@@ -348,8 +348,9 @@ For each and every instance of a modbus device there is a new thread started wit
 The full functionality like coils and holding registers currently are supported by the function
 `processModbusAction` from the `ComAndDataProcessor` module, which is used by the modbus *master*.
 
-The slave on the other hand is limited by the functionality of libmodbus. libmodbus provides following types
-which could be used with slave/server communication:
+The slave on the other hand is limited by the functionality of
+[libmodbus mapping](https://libmodbus.org/docs/v3.1.7/modbus_mapping_new.html).
+libmodbus provides following types which could be used with slave/server communication:
 
   * bits
   * input_bits
