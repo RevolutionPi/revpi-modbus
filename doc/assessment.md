@@ -40,6 +40,7 @@ as long as piControl parses the same config.rsc.
 First of all: there is no such thing as a state machine in the modbus code.
 There's scheduling for the Modbus master.
 
+### Electrical
 As [this forum's post](https://revolutionpi.de/forum/viewtopic.php?p=11870#p11887)
 describes with RTU there is more to this than just messed up timings. It's being
 proven there that libmodbus itself either has no collison detection or we don't
@@ -50,6 +51,12 @@ is half duplex.
 i.e. it handles collision prevention via RTS, i.e. it cannot be expected to work
 with just two cable wiring or a slave device that uses the RTS line faulty or not
 at all.
+
+![RS-485 wiring Connect](wiring_rs485.png)
+
+The schematic above shows that for RevPi Connect's RS-485 interface the RTS
+is not connected with the FT232R module. Since UART0TXDEN is connected with
+CBUS2, it has to be evaluated if this can be used as an alternative.
 
 ### Timings
 The electrical problem aside, there also is
