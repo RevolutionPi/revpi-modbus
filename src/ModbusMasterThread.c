@@ -25,6 +25,8 @@
 #include <time.h>
 #endif
 
+struct TMBMasterConfHead mbMasterConfHead;
+
 //#define MODBUS_DEBUG
 
 static int32_t setprio(int prio, int sched)

@@ -160,8 +160,8 @@ struct TMBMasterConfigEntry
     SLIST_ENTRY(TMBMasterConfigEntry) entries;
 };
 
-SLIST_HEAD(TMBSlaveConfHead, TMBSlaveConfigEntry) mbSlaveConfHead;
-SLIST_HEAD(TMBMasterConfHead, TMBMasterConfigEntry) mbMasterConfHead;
+SLIST_HEAD(TMBSlaveConfHead, TMBSlaveConfigEntry);
+extern struct TMBSlaveConfHead mbSlaveConfHead;
 
-
-
+SLIST_HEAD(TMBMasterConfHead, TMBMasterConfigEntry);
+extern struct TMBMasterConfHead mbMasterConfHead;

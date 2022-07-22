@@ -21,6 +21,8 @@
 
 #include "piProcessImageAccess.h"
 
+struct TMBSlaveConfHead mbSlaveConfHead;
+
 //#define MODBUS_DEBUG
 
 /************************************************************************/
