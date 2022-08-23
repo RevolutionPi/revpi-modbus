@@ -254,12 +254,12 @@ void *startRtuSlaveThread(void *arg)
 {
     TModbusSlaveConfiguration *psModbusConfiguration_l = (TModbusSlaveConfiguration*)arg;
     struct hndlRtuSlaveThread hdl;
-    int logRtuPath = 0;
 
     hdl.mb_slave = NULL;
     hdl.mbMapping = NULL;
     
     pthread_cleanup_push(cleanupRtuSlaveThread, &hdl);
+    int logRtuPath = 0; // late declaration prevents Wclobbered error
     
     /* Wait for serial device getting ready(Readable, Writable) */
     while(access(psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig.sz8DeviceFilePath,
