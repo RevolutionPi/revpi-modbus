@@ -23,7 +23,7 @@
 int main(int argc, char *argv[])
 {
     int i, modbusDevicesCount;
-    pthread_t *pThreads;
+    pthread_t *pThreads = NULL;
     struct TMBMasterConfigEntry *mbMasterConfigListEntry;
 
     (void)argc;
