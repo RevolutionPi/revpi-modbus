@@ -1,3 +1,8 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# Copyright 2023 KUNBUS GmbH
+#
+
 include_directories(../piControl/)
 set(TARGET_SLAVE piModbusSlave)
 set(TARGET_MASTER piModbusMaster)
