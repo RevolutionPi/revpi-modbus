@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
 /*!
  *
  * Project: piModbusSlave
@@ -22,9 +24,9 @@
 #ifndef MODBUS_MAX_PDU_LENGTH 
 #define MODBUS_MAX_PDU_LENGTH 253
 #endif
+#define MODBUS_ADDRESS_OFFSET 1
 
 pthread_mutex_t mutex_modbus_context = PTHREAD_MUTEX_INITIALIZER;
-uint8_t buffer[MAX_MODBUS_READ_COILS_COUNT] = { 0 };  //max 2000 coils, every coil, has its own byte 
 
 /************************************************************************/
 /** @ brief processing the given modbus action and updates the process image
@@ -39,7 +41,7 @@ uint8_t buffer[MAX_MODBUS_READ_COILS_COUNT] = { 0 };  //max 2000 coils, every co
  *	
  */
 /************************************************************************/
-int32_t processModbusAction(modbus_t *pModbusContext, tModbusEvent* mb_event)
+int32_t processModbusAction(modbus_t *pModbusContext, tModbusEvent* mb_event, uint8_t *buffer)
 {
     int32_t len = 0;
     int32_t successful = 0;
@@ -244,7 +246,7 @@ int32_t processModbusAction(modbus_t *pModbusContext, tModbusEvent* mb_event)
             assert(mb_event->ptModbusAction->i16uRegisterCount <= MODBUS_MAX_PDU_LENGTH);
 	        
 #if LIBMODBUS_VERSION_CHECK(3,1,2)
-	        len = modbus_report_slave_id(pModbusContext, MAX_MODBUS_READ_COILS_COUNT, (uint8_t*)buffer);
+	        len = modbus_report_slave_id(pModbusContext, MAX_REGISTER_SIZE_PER_ACTION, (uint8_t*)buffer);
 #else	
 	        len = modbus_report_slave_id(pModbusContext, (uint8_t*)buffer);
 #endif

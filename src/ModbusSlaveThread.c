@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
 /*!
  *
  * Project: piModbusSlave
@@ -20,6 +22,8 @@
 #include "ModbusSlaveThread.h"
 
 #include "piProcessImageAccess.h"
+
+struct TMBSlaveConfHead mbSlaveConfHead;
 
 //#define MODBUS_DEBUG
 
@@ -59,7 +63,7 @@ void cleanupTcpSlaveThread(void *ptr)
 
     for (fd = 0; fd < __FD_SETSIZE; fd++)
     {
-        if (FD_ISSET(fd, &h->refset))
+        if (FD_ISSET(fd, &h->refset)) // NOLINT
         {
             close(fd);
             syslog(LOG_ERR, "close socket %d\n", fd);
@@ -72,7 +76,6 @@ void *startTcpSlaveThread(void *arg)
     TModbusSlaveConfiguration *psModbusConfiguration_l = (TModbusSlaveConfiguration*)arg;
     struct hndlTcpSlaveThread hdl;
     int ret;
-    int master_socket = 0;
     int server_socket = -1;
     fd_set rdset;
     /* maximal file descriptor number */
@@ -101,7 +104,7 @@ void *startTcpSlaveThread(void *arg)
     }
     
     char st8TcpPort[10];
-    sprintf(st8TcpPort, "%d", psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig.i32uPort);
+    snprintf(st8TcpPort, sizeof(st8TcpPort), "%d", psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig.i32uPort);
     hdl.mb_slave = modbus_new_tcp_pi(psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig.szTcpIpAddress, st8TcpPort);
     if (!hdl.mb_slave) {
         syslog(LOG_ERR, "Failed to create the modbus context\n");
@@ -137,6 +140,7 @@ void *startTcpSlaveThread(void *arg)
             
     while (1)
     {
+        int master_socket = 0;
         rdset = hdl.refset;
         ret = select(fdmax + 1, &rdset, NULL, NULL, NULL);
         if (ret == -1)
@@ -252,12 +256,12 @@ void *startRtuSlaveThread(void *arg)
 {
     TModbusSlaveConfiguration *psModbusConfiguration_l = (TModbusSlaveConfiguration*)arg;
     struct hndlRtuSlaveThread hdl;
-    int logRtuPath = 0;
 
     hdl.mb_slave = NULL;
     hdl.mbMapping = NULL;
     
     pthread_cleanup_push(cleanupRtuSlaveThread, &hdl);
+    int logRtuPath = 0; // late declaration prevents Wclobbered error
     
     /* Wait for serial device getting ready(Readable, Writable) */
     while(access(psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig.sz8DeviceFilePath,
@@ -317,10 +321,7 @@ void *startRtuSlaveThread(void *arg)
         process_modbus_request(hdl.mb_slave, hdl.mbMapping, psModbusConfiguration_l);
     }
     
-    pthread_cleanup_pop(1);
-    printf("Quit the loop: %s\n", modbus_strerror(errno));
-    
-    return NULL;
+    pthread_cleanup_pop(1); // this makro closes the loop of pthread_cleanup_push
 }
 
 

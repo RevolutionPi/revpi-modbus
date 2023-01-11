@@ -1,3 +1,9 @@
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
+/*
+ * Copyright 2023 KUNBUS GmbH
+ */
+
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -23,7 +29,7 @@
 int main(int argc, char *argv[])
 {
     int i, modbusDevicesCount;
-    pthread_t *pThreads;
+    pthread_t *pThreads = NULL;
     struct TMBMasterConfigEntry *mbMasterConfigListEntry;
 
     (void)argc;
