@@ -519,7 +519,7 @@ int32_t parse_modbus_master_config_data(const char* pc8_pi_config_data_p, struct
     }
 
     //search for matching device types
-    for (size_t i = 0; i < array_list_length(devices_array); i++)
+    for (size_t i = 0; i < (size_t)array_list_length(devices_array); i++)
     {
         json_object *json_pi_device = NULL;
         const char* productType = NULL;
@@ -654,7 +654,7 @@ int32_t parse_modbus_slaves_config_data(const char* pc8_pi_config_data_p, struct
     }
 
     //search for matching device types
-    for (size_t i = 0; i < array_list_length(devices_array); i++)
+    for (size_t i = 0; i < (size_t)array_list_length(devices_array); i++)
     {
         json_object *pi_device = NULL;
         const char* productType = NULL;
