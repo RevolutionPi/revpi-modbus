@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
 /*!
  *
  * Project: piModbusSlave
@@ -24,7 +26,7 @@
 int32_t main(int32_t argc, char *argv[])
 {
     int i, modbusDevicesCount;
-    pthread_t *pThreads;
+    pthread_t *pThreads = NULL;
     
     (void)argc;
     (void)argv;
@@ -101,7 +103,7 @@ int32_t main(int32_t argc, char *argv[])
         if (modbusDevicesCount > 0)
         {
             for (i = 0; i < modbusDevicesCount; i++) {
-                pthread_cancel(pThreads[i]);            
+                pthread_cancel(pThreads[i]); // NOLINT is initialized if modbusDevicesCount > 0
             }
             free(pThreads);
 

@@ -1,0 +1,26 @@
+name: Clang-Tidy docker runner
+
+on: [push]
+
+permissions:
+  packages: read
+  contents: read
+
+jobs:
+    test:
+        name: Run static code analysis
+        runs-on: ubuntu-latest
+        container:
+            image: ghcr.io/revolutionpi/clang-tidy-analysis:0.3
+            options: --user 1001
+            credentials:
+                username: ${{ github.actor }}
+                password: ${{ secrets.GITHUB_TOKEN }}
+        steps:
+          - uses: actions/checkout@v3
+            with:
+              submodules: recursive
+
+          - name: Test with clang-tidy
+            run: clang-tidy src/*.c src/*.h -- -IpiControl -std=c99
+

@@ -1,3 +1,9 @@
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
+/*
+ * Copyright 2023 KUNBUS GmbH
+ */
+
 #pragma once
 
 #include <sys/types.h>
@@ -22,6 +28,9 @@
 #define MAX_MODBUS_READ_INPUT_REGISTERS_COUNT   125
 #define MAX_MODBUS_WRITE_COILS_COUNT            1968
 #define MAX_MODBUS_WRITE_REGISTERS_COUNT        123
+
+//max register size for each modbus device action configured in pictory
+#define MAX_REGISTER_SIZE_PER_ACTION            256
 
 typedef enum
 {
@@ -157,8 +166,8 @@ struct TMBMasterConfigEntry
     SLIST_ENTRY(TMBMasterConfigEntry) entries;
 };
 
-SLIST_HEAD(TMBSlaveConfHead, TMBSlaveConfigEntry) mbSlaveConfHead;
-SLIST_HEAD(TMBMasterConfHead, TMBMasterConfigEntry) mbMasterConfHead;
+SLIST_HEAD(TMBSlaveConfHead, TMBSlaveConfigEntry);
+extern struct TMBSlaveConfHead mbSlaveConfHead;
 
-
-
+SLIST_HEAD(TMBMasterConfHead, TMBMasterConfigEntry);
+extern struct TMBMasterConfHead mbMasterConfHead;
