@@ -1,3 +1,43 @@
+revpi-modbus (1.1.0-1~revpi9+1) stretch; urgency=medium
+
+  [ Amar Jadhav ]
+  * Localize buffer to Modbus TCP/RTU device instance
+  * Optimize buffer size used in Modbus Master action
+
+  [ Holger Jorra ]
+  * Refactored several issues found by Cppcheck
+  * Applied some suggestions of splint
+  * Replaced sprintf for security reasons
+  * Fixed remaining warnings found by clang-tidy
+  * Enumerated all errors of parsing module
+  * Unified log output in parsing module
+  * Cleaned up public interface of parsing module
+  * Removed misleading return code evaluation
+  * Redacted undesired changes of b53f2d6271c
+  * Establish test pipeline for static code analysis
+  * Added documentation about input and output
+  * Assessment for current issues and To-Do
+  * Additional information about RS-485
+  * Code compatibitlity with GCC 10
+  * Satisfy gcc -Wclobbered
+  * Satisfy gcc -Wmaybe-uninitialized
+
+  [ Nicolai Buchwitz ]
+  * Run actions on github worker and fix pipeline
+  * Change license to GPL-2.0
+
+  [ Philipp Rosenberger ]
+  * Use unix line endings for all source files
+  * Add SPDX headers: SPDX-License-Identifier: GPL-2.0-or-later
+
+  [ Nicolai Buchwitz ]
+  * Change license to GPL-2.0
+
+  [ Holger Jorra ]
+  * Fixed build with libjson-c 0.12 on buster
+
+ -- Sven Sager <s.sager@kunbus.com>  Wed, 11 Jan 2023 14:16:19 +0100
+
 revpi-modbus (1.0.11-1~revpi9+1) stretch; urgency=medium
 
   * Remove dependency for presence of dev-ttyRS485.device for service
