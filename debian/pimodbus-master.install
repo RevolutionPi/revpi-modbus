@@ -1,3 +1,2 @@
-#!/usr/bin/dh-exec
 usr/sbin/piModbusMaster
 lib/systemd/system/pimodbus-master.service
