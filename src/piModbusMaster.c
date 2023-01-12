@@ -1,3 +1,9 @@
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
+/*
+ * Copyright 2023 KUNBUS GmbH
+ */
+
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
