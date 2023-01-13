@@ -1,3 +1,9 @@
+revpi-modbus (1.1.0-1+revpi10+2) buster; urgency=medium
+
+  * debian: Cleanup debianization
+
+ -- Philipp Rosenberger <p.rosenberger@kunbus.com>  Fri, 13 Jan 2023 16:20:08 +0100
+
 revpi-modbus (1.1.0-1+revpi10+1) buster; urgency=medium
 
   [ Amar Jadhav ]
