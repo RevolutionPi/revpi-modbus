@@ -7,5 +7,5 @@ export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 %:
 	dh $@
 
-override_dh_systemd_enable:
-	dh_systemd_enable --no-enable
+override_dh_installsystemd:
+	dh_installsystemd --no-enable --no-start
