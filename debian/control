@@ -19,9 +19,10 @@ Depends:
   ${shlibs:Depends},
   ${misc:Depends}
 Description: Revolution Pi Modbus master
- Control USB- or Ethernet-attached Modbus slaves from a RevPi Core.
- Revolution Pi is a set of IoT products based on the Raspberry Pi and
- geared towards industrial usage.
+ Connect to ModbusRTU or ModbusTCP servers (formerly slaves) from
+ this RevPi device.
+ Revolution Pi is a set of IoT products based on the
+ Raspberry Pi and geared towards industrial usage.
 
 Package: pimodbus-slave
 Architecture: any
@@ -29,6 +30,8 @@ Depends:
   ${shlibs:Depends},
   ${misc:Depends}
 Description: Revolution Pi Modbus slave
- Control a RevPi Core from a USB- or Ethernet-attached Modbus master.
+ Use the RevPi device as a ModbusRTU or ModbusTCP server (formerly
+ slave). This will allow ModbusRTU or ModbusTCP clients (formerly
+ masters) to connect to this RevPi device.
  Revolution Pi is a set of IoT products based on the Raspberry Pi and
  geared towards industrial usage.
