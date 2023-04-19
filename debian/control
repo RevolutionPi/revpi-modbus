@@ -1,20 +1,23 @@
 Source: revpi-modbus
 Section: contrib/electronics
 Priority: optional
-Build-Depends: debhelper-compat (= 12),
-               libmodbus-dev (>= 3.1.6),
-               libjson-c-dev,
-               cmake
-Standards-Version: 4.3.0
-Rules-Requires-Root: no
 Maintainer: KUNBUS GmbH <support@kunbus.com>
+Rules-Requires-Root: no
 Homepage: https://revolutionpi.com/
 Vcs-Browser: https://github.com/RevolutionPi/revpi-modbus
 Vcs-Git: https://github.com/RevolutionPi/revpi-modbus.git
+Build-Depends:
+  debhelper-compat (= 12),
+  libmodbus-dev (>= 3.1.6),
+  libjson-c-dev,
+  cmake
+Standards-Version: 4.3.0
 
 Package: pimodbus-master
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends:
+  ${shlibs:Depends},
+  ${misc:Depends}
 Description: Revolution Pi Modbus master
  Control USB- or Ethernet-attached Modbus slaves from a RevPi Core.
  Revolution Pi is a set of IoT products based on the Raspberry Pi and
@@ -22,7 +25,9 @@ Description: Revolution Pi Modbus master
 
 Package: pimodbus-slave
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends:
+  ${shlibs:Depends},
+  ${misc:Depends}
 Description: Revolution Pi Modbus slave
  Control a RevPi Core from a USB- or Ethernet-attached Modbus master.
  Revolution Pi is a set of IoT products based on the Raspberry Pi and
