@@ -10,7 +10,7 @@ Rules-Requires-Root: no
 Maintainer: KUNBUS GmbH <support@kunbus.com>
 Homepage: https://revolutionpi.com/
 Vcs-Browser: https://github.com/RevolutionPi/revpi-modbus
-Vcs-Git: https://github.com/RevolutionPi/revpi-modbus.git -b raspios/buster
+Vcs-Git: https://github.com/RevolutionPi/revpi-modbus.git
 
 Package: pimodbus-master
 Architecture: any
