@@ -1,4 +1,4 @@
-revpi-modbus (1.1.0-1+revpi10+3) buster; urgency=medium
+revpi-modbus (1.1.0-1+revpi11+1) bullseye; urgency=medium
 
   * Remove invalid -b (branch name) part of Vcs-Git value
   * Set upstream-branch value in gbp.conf to master
