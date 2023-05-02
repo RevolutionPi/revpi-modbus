@@ -1,5 +1,5 @@
 Source: revpi-modbus
-Section: contrib/electronics
+Section: electronics
 Priority: optional
 Maintainer: KUNBUS GmbH <support@kunbus.com>
 Rules-Requires-Root: no
@@ -13,25 +13,47 @@ Build-Depends:
   cmake
 Standards-Version: 4.5.1
 
-Package: pimodbus-master
+Package: revpi-modbus-client
 Architecture: any
 Depends:
   ${shlibs:Depends},
   ${misc:Depends}
-Description: Revolution Pi Modbus master
+Replaces: pimodbus-master (<< 1.1.0-1+revpi11+2)
+Breaks: pimodbus-master (<< 1.1.0-1+revpi11+2)
+Description: Revolution Pi Modbus client
  Connect to ModbusRTU or ModbusTCP servers (formerly slaves) from
  this RevPi device.
  Revolution Pi is a set of IoT products based on the
  Raspberry Pi and geared towards industrial usage.
 
-Package: pimodbus-slave
+Package: revpi-modbus-server
 Architecture: any
 Depends:
   ${shlibs:Depends},
   ${misc:Depends}
-Description: Revolution Pi Modbus slave
+Replaces: pimodbus-slave (<< 1.1.0-1+revpi11+2)
+Breaks: pimodbus-slave (<< 1.1.0-1+revpi11+2)
+Description: Revolution Pi Modbus server
  Use the RevPi device as a ModbusRTU or ModbusTCP server (formerly
  slave). This will allow ModbusRTU or ModbusTCP clients (formerly
  masters) to connect to this RevPi device.
  Revolution Pi is a set of IoT products based on the Raspberry Pi and
  geared towards industrial usage.
+
+Package: pimodbus-master
+Architecture: all
+Section: oldlibs
+Depends:
+  revpi-modbus-client,
+  ${misc:Depends}
+Description: transitional renaming package to revpi-modbus-client
+ This is a transitional package. It can safely be removed.
+
+Package: pimodbus-slave
+Architecture: all
+Section: oldlibs
+Depends:
+  revpi-modbus-server,
+  ${misc:Depends}
+Description: transitional renaming package to revpi-modbus-server
+ This is a transitional package. It can safely be removed.
