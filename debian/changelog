@@ -1,3 +1,9 @@
+revpi-modbus (1.1.0-1+revpi11+2) bullseye; urgency=medium
+
+  * Rename Debian packages for modbus
+
+ -- Holger Jorra <h.jorra@kunbus.com>  Wed, 03 May 2023 13:25:09 +0200
+
 revpi-modbus (1.1.0-1+revpi11+1) bullseye; urgency=medium
 
   * Remove invalid -b (branch name) part of Vcs-Git value
