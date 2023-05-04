@@ -1,3 +1,9 @@
+revpi-modbus (1.1.0-1+revpi10+4) buster; urgency=medium
+
+  * fix: Daemons does not start after upgrade
+
+ -- Sven Sager <s.sager@kunbus.com>  Thu, 04 May 2023 08:16:39 +0200
+
 revpi-modbus (1.1.0-1+revpi10+3) buster; urgency=medium
 
   * Remove invalid -b (branch name) part of Vcs-Git value
