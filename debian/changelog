@@ -1,3 +1,9 @@
+revpi-modbus (1.1.0-1+revpi11+3) bullseye; urgency=medium
+
+  * fix: Daemons do not start after upgrade
+
+ -- Sven Sager <s.sager@kunbus.com>  Fri, 05 May 2023 13:09:48 +0200
+
 revpi-modbus (1.1.0-1+revpi11+2) bullseye; urgency=medium
 
   * Rename Debian packages for modbus
