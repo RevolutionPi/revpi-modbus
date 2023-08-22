@@ -1,3 +1,9 @@
+revpi-modbus (1.1.0-1+revpi12+1) bookworm; urgency=medium
+
+  * Update and rebuild package for Bookworm
+
+ -- Philipp Rosenberger <p.rosenberger@kunbus.com>  Tue, 22 Aug 2023 09:33:43 +0200
+
 revpi-modbus (1.1.0-1+revpi11+3) bullseye; urgency=medium
 
   * fix: Daemons do not start after upgrade

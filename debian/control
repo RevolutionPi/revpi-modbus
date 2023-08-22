@@ -5,13 +5,13 @@ Maintainer: KUNBUS GmbH <support@kunbus.com>
 Rules-Requires-Root: no
 Homepage: https://revolutionpi.com/
 Vcs-Browser: https://github.com/RevolutionPi/revpi-modbus
-Vcs-Git: https://github.com/RevolutionPi/revpi-modbus.git -b raspios/bullseye
+Vcs-Git: https://github.com/RevolutionPi/revpi-modbus.git -b raspios/bookworm
 Build-Depends:
   debhelper-compat (= 13),
   libmodbus-dev (>= 3.1.6),
   libjson-c-dev,
   cmake
-Standards-Version: 4.5.1
+Standards-Version: 4.6.2
 
 Package: revpi-modbus-client
 Architecture: any
