@@ -7,10 +7,12 @@ Homepage: https://revolutionpi.com/
 Vcs-Browser: https://github.com/RevolutionPi/revpi-modbus
 Vcs-Git: https://github.com/RevolutionPi/revpi-modbus.git -b raspios/bullseye
 Build-Depends:
+  cmake,
   debhelper-compat (= 13),
-  libmodbus-dev (>= 3.1.6),
   libjson-c-dev,
-  cmake
+  libmodbus-dev (>= 3.1.6),
+  pkg-config,
+  systemd
 Standards-Version: 4.5.1
 
 Package: revpi-modbus-client
