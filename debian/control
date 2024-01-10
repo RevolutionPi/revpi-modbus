@@ -5,7 +5,7 @@ Maintainer: KUNBUS GmbH <support@kunbus.com>
 Rules-Requires-Root: no
 Homepage: https://revolutionpi.com/
 Vcs-Browser: https://gitlab.com/revolutionpi/revpi-modbus
-Vcs-Git: https://gitlab.com/revolutionpi/revpi-modbus.git -b raspios/bookworm
+Vcs-Git: https://gitlab.com/revolutionpi/revpi-modbus.git -b debian/bookworm
 Build-Depends:
   debhelper-compat (= 13),
   libmodbus-dev (>= 3.1.6),
