@@ -1,5 +1,5 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Source: https://github.com/RevolutionPi/revpi-modbus
+Source: https://gitlab.com/RevolutionPi/revpi-modbus
 
 Files: *
 Copyright: 2017-2023 KUNBUS GmbH
