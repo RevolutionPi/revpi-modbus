@@ -1,3 +1,11 @@
+revpi-modbus (1.1.0-1+revpi12+2) bookworm; urgency=medium
+
+  [ Philipp Rosenberger ]
+  * Update debianization to reflect the move to gitlab
+  * Switch back to the debian/ namespace
+
+ -- Thomas Böhler <t.boehler@kunbus.com>  Tue, 05 Mar 2024 12:56:22 +0100
+
 revpi-modbus (1.1.0-1+revpi12+1) bookworm; urgency=medium
 
   * Update and rebuild package for Bookworm
