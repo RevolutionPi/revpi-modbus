@@ -1,6 +1,6 @@
 [Unit]
 Description=Revolution Pi Modbus master
-Documentation=https://revolution.kunbus.com
+Documentation=https://revolutionpi.com
 After=network.target systemd-modules-load.service
 
 [Service]
