@@ -1,0 +1,12 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: revpi-modbus
+Upstream-Contact: KUNBUS GmbH <support@kunbus.com>
+Source: https://gitlab.com/revolutionpi/revpi-modbus
+
+Files: piControl/* doc/*.png
+Copyright: 2023 KUNBUS GmbH
+License: GPL-2.0-or-later
+
+Files: .gitignore .gitmodules src/.clang-tidy
+Copyright: 2023 KUNBUS GmbH
+License: CC0-1.0

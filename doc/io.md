@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2023 KUNBUS GmbH
+
+SPDX-License-Identifier: GPL-2.0-or-later
+-->
+
 # Input/Output mechanisms
 ## Configuration
 
