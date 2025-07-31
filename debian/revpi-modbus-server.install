@@ -1,2 +1,4 @@
+data/firewalld/revpi-modbus-default.xml  usr/lib/firewalld/services/
+
 usr/sbin/piModbusSlave
 lib/systemd/system/pimodbus-slave.service
