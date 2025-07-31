@@ -7,6 +7,10 @@ Files: piControl/* doc/*.png
 Copyright: 2023 KUNBUS GmbH
 License: GPL-2.0-or-later
 
+Files: data/firewalld/revpi-modbus-default.xml
+Copyright: 2025 KUNBUS GmbH
+License: GPL-2.0-or-later
+
 Files: .gitignore .gitmodules src/.clang-tidy
 Copyright: 2023 KUNBUS GmbH
 License: CC0-1.0
