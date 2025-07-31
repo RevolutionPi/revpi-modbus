@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>RevPi Modbus Server (Slave)</short>
+  <description>RevPi Modbus Server (Slave) provides Modbus TCP communication with industrial devices.</description>
+  <port protocol="tcp" port="502"/>
+</service>

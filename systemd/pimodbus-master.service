@@ -1,6 +1,10 @@
+# SPDX-FileCopyrightText: 2024 KUNBUS GmbH
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 [Unit]
 Description=Revolution Pi Modbus master
-Documentation=https://revolution.kunbus.com
+Documentation=https://revolutionpi.com
 After=network.target systemd-modules-load.service
 
 [Service]
