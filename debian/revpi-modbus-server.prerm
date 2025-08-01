@@ -7,9 +7,6 @@ case "$1" in
         # Use offline mode to configure service
         # firewalld will complain if potentially active service isn't removed before removing the definition
         firewall-offline-cmd --remove-service=revpi-modbus-default >/dev/null 2>&1 || true
-
-        # Try reload, ignore errors if service is not running
-        firewall-cmd --reload >/dev/null 2>&1 || true
     ;;
 
     upgrade|deconfigure)
