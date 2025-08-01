@@ -1,3 +1,9 @@
+revpi-modbus (1.2.0-1+deb12+2) bookworm; urgency=medium
+
+  * feat(deb): Move `firewall-cmd --reload` to postrm script
+
+ -- Sven Sager <s.sager@kunbus.com>  Fri, 01 Aug 2025 12:22:49 +0200
+
 revpi-modbus (1.2.0-1+deb12+1) bookworm; urgency=medium
 
   [ Thomas Böhler ]
