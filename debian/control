@@ -10,7 +10,8 @@ Build-Depends:
   debhelper-compat (= 13),
   libmodbus-dev (>= 3.1.6),
   libjson-c-dev,
-  cmake
+  cmake,
+  pkg-config,
 Standards-Version: 4.6.2
 
 Package: revpi-modbus-client
