@@ -1,3 +1,33 @@
+revpi-modbus (1.2.0-1+deb12+1) bookworm; urgency=medium
+
+  [ Thomas Böhler ]
+  * build: Utilize GNU installation directories
+  * build: Use pkg-config for services install path
+  * chore: Add move to GitLab to README
+  * build: Remove implicit C++ dependency from CMake
+
+  [ Nicolai Buchwitz ]
+  * fix: Update docs URL in systemd units
+
+  [ Holger Jorra ]
+  * chore: Fix reuse for project
+
+  [ Marc Kittner ]
+  * feat: Add firewalld zone file
+
+  [ Sven Sager ]
+  * feat(deb): Add pkg-config as build dependency
+
+  [ Thomas Böhler ]
+  * feat(deb): Add systemd as build dependency
+  * chore(deb): sort build dependencies
+
+  [ Sven Sager ]
+  * feat(deb): Add firewalld configuration to install file
+  * feat(deb): Reload firewalld and remove optional added profile
+
+ -- Thomas Böhler <t.boehler@kunbus.com>  Fri, 01 Aug 2025 08:10:01 +0200
+
 revpi-modbus (1.1.0-1+revpi12+2) bookworm; urgency=medium
 
   [ Philipp Rosenberger ]
