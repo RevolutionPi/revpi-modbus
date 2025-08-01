@@ -7,10 +7,10 @@ Homepage: https://revolutionpi.com/
 Vcs-Browser: https://gitlab.com/revolutionpi/revpi-modbus
 Vcs-Git: https://gitlab.com/revolutionpi/revpi-modbus.git -b debian/bookworm
 Build-Depends:
-  debhelper-compat (= 13),
-  libmodbus-dev (>= 3.1.6),
-  libjson-c-dev,
   cmake,
+  debhelper-compat (= 13),
+  libjson-c-dev,
+  libmodbus-dev (>= 3.1.6),
   pkg-config,
   systemd,
 Standards-Version: 4.6.2
