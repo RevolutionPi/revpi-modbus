@@ -12,6 +12,7 @@ Build-Depends:
   libjson-c-dev,
   cmake,
   pkg-config,
+  systemd,
 Standards-Version: 4.6.2
 
 Package: revpi-modbus-client
