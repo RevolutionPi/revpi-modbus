@@ -1,3 +1,17 @@
+revpi-modbus (1.2.1-1+deb13+1) trixie; urgency=medium
+
+  [ Ramiro Gsponer ]
+  * fix: enum/int type mismatches in piConfigParser
+  * fix: calloc argument order in piModbusMaster
+
+  [ Sven Sager ]
+  * feat(deb): Remove transitional renaming packages
+  * fix(deb): Do not use aliased-location in install file
+  * fix(deb): Update GPL-2+ short text
+  * feat(deb): Update debian settings to trixie release
+
+ -- Sven Sager <s.sager@kunbus.com>  Wed, 10 Dec 2025 11:37:45 +0100
+
 revpi-modbus (1.2.0-1+deb12+2) bookworm; urgency=medium
 
   * feat(deb): Move `firewall-cmd --reload` to postrm script
