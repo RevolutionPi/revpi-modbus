@@ -41,21 +41,3 @@ Description: Revolution Pi Modbus server
  masters) to connect to this RevPi device.
  Revolution Pi is a set of IoT products based on the Raspberry Pi and
  geared towards industrial usage.
-
-Package: pimodbus-master
-Architecture: all
-Section: oldlibs
-Depends:
-  revpi-modbus-client,
-  ${misc:Depends}
-Description: transitional renaming package to revpi-modbus-client
- This is a transitional package. It can safely be removed.
-
-Package: pimodbus-slave
-Architecture: all
-Section: oldlibs
-Depends:
-  revpi-modbus-server,
-  ${misc:Depends}
-Description: transitional renaming package to revpi-modbus-server
- This is a transitional package. It can safely be removed.
