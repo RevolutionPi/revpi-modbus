@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
             {
                 modbusDevicesCount++;
             }
-            pThreads = calloc(sizeof(pthread_t), modbusDevicesCount);
+            pThreads = calloc(modbusDevicesCount, sizeof(pthread_t));
         
             //start a thread for every matching configuration found in pictory config file
             i = 0;
