@@ -3,11 +3,12 @@
 # Copyright 2023 KUNBUS GmbH
 #
 
-include_directories(../piControl/)
+include_directories(../piTest/include/)
+include_directories(../piTest/lib/piControl/src/)
 set(TARGET_SLAVE piModbusSlave)
 set(TARGET_MASTER piModbusMaster)
 
-set(PICONTROLIF ../piControl/piTest/piControlIf.c)
+set(PICONTROLIF ../piTest/src/piControlIf.c)
 set(COMM_OBJ piConfigParser/piConfigParser.c)
 
 add_executable(${TARGET_MASTER}

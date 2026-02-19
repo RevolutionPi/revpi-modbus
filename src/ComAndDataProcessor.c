@@ -19,7 +19,7 @@
 #include "modbusconfig.h"
 #include <stdio.h>
 #include <errno.h>
-#include <piTest/piControlIf.h>
+#include <piControlIf.h>
 #include <sys/param.h>
 #include <assert.h>
 #include <syslog.h>

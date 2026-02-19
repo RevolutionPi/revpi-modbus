@@ -23,7 +23,7 @@
 
 #include "piModbusSlave.h"
 #include "ModbusSlaveThread.h"
-#include <piTest/piControlIf.h>
+#include <piControlIf.h>
 #include "piConfigParser/piConfigParser.h"
 
 

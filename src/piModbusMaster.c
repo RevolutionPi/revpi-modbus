@@ -20,7 +20,7 @@
 
 #include "ModbusMasterThread.h"
 #include "piConfigParser/piConfigParser.h"
-#include <piTest/piControlIf.h>
+#include <piControlIf.h>
 
 #define DEBUG_MODE
 

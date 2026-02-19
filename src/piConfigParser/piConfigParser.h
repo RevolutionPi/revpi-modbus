@@ -26,6 +26,7 @@
 #define RELATIVE_PROCESS_IMAGE_VARIABLE_BIT_OFFSET_ARRAY_POSITION 7
 
 
+#define PICONFIG_FILE					"/etc/revpi/config.rsc"
 
 //TODO: use defines from common_define.h
 #define MODBUS_SLAVE_TCP_PI_PRODUCT_TYPE    "24577"

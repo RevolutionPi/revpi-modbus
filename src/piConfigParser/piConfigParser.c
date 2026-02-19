@@ -23,8 +23,7 @@
 #include <sys/types.h>
 #include <regex.h>
 
-#include <piControl.h>
-#include <piTest/piControlIf.h>
+#include <piControlIf.h>
 
 
 typedef enum
@@ -319,11 +318,6 @@ char* read_config_file(void)
     FILE *config_file = NULL;
 
     config_file = fopen(PICONFIG_FILE, "r");
-    if (config_file == NULL)
-    {
-        // try old filename/location
-        config_file = fopen(PICONFIG_FILE_WHEEZY, "r");
-    }
 
     if (config_file != NULL)
     {
