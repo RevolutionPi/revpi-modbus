@@ -12,6 +12,9 @@ ExecStart=/usr/sbin/piModbusSlave
 StandardOutput=journal
 StandardError=journal
 Restart=on-failure
+User=revpi-modbus
+Group=revpi-modbus
+SupplementaryGroups=dialout picontrol
 
 [Install]
 WantedBy=multi-user.target
