@@ -7,13 +7,13 @@ SPDX-License-Identifier: GPL-2.0-or-later
 # Assessment of current implementation
 At time of writing there are three open questions
 
-  * Can coils be supported from the slave side of the implementation?
+  * Can coils be supported from the server side of the implementation?
   * Can the problems with "state machine", periods and timouts be solved?
   * Can we make it work with GCC 10?
 
 all with current implementation, or do we need a rewrite and if so: why?
 
-## Support of Slave Coils
+## Support of Server Coils
 This has been evaluated [here](io.md).
 
 The struct for the process image layout already contains sizes of coils
@@ -33,9 +33,9 @@ typedef struct
 
 ```
 
-`parse_modbus_slave_device_process_image_config` in piConfigParser.c does not
+`parse_modbus_server_device_process_image_config` in piConfigParser.c does not
 recognize these parts, though. I.e. in order to implement coils the image size
-slave devices have to be increased, and the configuration by PiCtory must be
+server devices have to be increased, and the configuration by PiCtory must be
 extended. Other than that the read/write access is already implemented by
 piProcessImageAccess.c.
 
@@ -44,7 +44,7 @@ as long as piControl parses the same config.rsc.
 
 ## Solve issue with timings
 First of all: there is no such thing as a state machine in the modbus code.
-There's scheduling for the Modbus master.
+There's scheduling for the Modbus client.
 
 ### Electrical
 As [this forum's post](https://revolutionpi.de/forum/viewtopic.php?p=11870#p11887)
@@ -55,7 +55,7 @@ is half duplex.
 
 [libmodbus therefore respects half duplex communication](https://github.com/stephane/libmodbus/issues/360),
 i.e. it handles collision prevention via RTS, i.e. it cannot be expected to work
-with just two cable wiring or a slave device that uses the RTS line faulty or not
+with just two cable wiring or a server device that uses the RTS line faulty or not
 at all.
 
 ![RS-485 wiring Connect](wiring_rs485.png)

@@ -1,18 +1,18 @@
 /*
- * SPDX-FileCopyrightText: 2023 KUNBUS GmbH
+ * SPDX-FileCopyrightText: 2023-2026 KUNBUS GmbH
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
 /*!
  *
- * Project: piModbusSlave
- * (C)    : KUNBUS GmbH, Heerweg 15C, 73370 Denkendorf, Germany
+ * Project: piModbusServer
+ * (C)    : KUNBUS GmbH, Magirusstraße 7, 73760 Ostfildern, Germany
  *
  */
 
-#ifndef PIMODBUSSLAVE_H_
-#define PIMODBUSSLAVE_H_
+#ifndef PIMODBUSSERVER_H_
+#define PIMODBUSSERVER_H_
 
 #include <stdint.h>
 
@@ -24,4 +24,4 @@ typedef struct
 	uint32_t i32uInputRegistersOffset;	// piProcessImage offset for configured Modbus input registers
 } SPiProcessImageOffsets;
 
-#endif /* PIMODBUSSLAVE_H_ */
+#endif /* PIMODBUSSERVER_H_ */

@@ -1,13 +1,13 @@
 /*
- * SPDX-FileCopyrightText: 2023 KUNBUS GmbH
+ * SPDX-FileCopyrightText: 2023-2026 KUNBUS GmbH
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
 /*!
  *
- * Project: piModbusSlave
- * (C)    : KUNBUS GmbH, Heerweg 15C, 73370 Denkendorf, Germany
+ * Project: piModbusServer
+ * (C)    : KUNBUS GmbH, Magirusstraße 7, 73760 Ostfildern, Germany
  *
  */
 
@@ -23,7 +23,7 @@ int32_t writeErrorMessage(uint32_t status_byte_pi_offset_p, uint8_t modbus_error
 int32_t reset_modbus_action_status(uint32_t status_reset_byte_offset_p,
 								   uint8_t status_reset_bit_offset_p,
 								   uint32_t status_byte_pi_offset_p);
-int32_t reset_modbus_master_status(uint32_t status_reset_byte_offset_p,
+int32_t reset_modbus_client_status(uint32_t status_reset_byte_offset_p,
 								   uint32_t status_byte_pi_offset_p);
 
 #endif /*MODBUS_PROCESSOR_H_*/

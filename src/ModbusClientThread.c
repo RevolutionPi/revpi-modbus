@@ -1,13 +1,13 @@
 /*
- * SPDX-FileCopyrightText: 2023 KUNBUS GmbH
+ * SPDX-FileCopyrightText: 2023-2026 KUNBUS GmbH
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
 /*!
  *
- * Project: piModbusMaster
- * (C)    : KUNBUS GmbH, Heerweg 15C, 73370 Denkendorf, Germany
+ * Project: piModbusClient
+ * (C)    : KUNBUS GmbH, Magirusstraße 7, 73760 Ostfildern, Germany
  *
  */
 
@@ -22,7 +22,7 @@
 #include <unistd.h>
 #include "Scheduler.h"
 #include "ComAndDataProcessor.h"
-#include "ModbusMasterThread.h"
+#include "ModbusClientThread.h"
 #include <syslog.h>
 
 #ifndef _MSC_VER
@@ -31,7 +31,7 @@
 #include <time.h>
 #endif
 
-struct TMBMasterConfHead mbMasterConfHead;
+struct TMBClientConfHead mbClientConfHead;
 
 //#define MODBUS_DEBUG
 
@@ -50,11 +50,11 @@ static int32_t setprio(int prio, int sched)
 
 const int32_t MAX_CONSECUTIVE_DELAYED_ACTIONS = 5;
 
-void cleanupTcpMasterThread(void *ptr)
+void cleanupTcpClientThread(void *ptr)
 {
     modbus_t *pModbusContext = (modbus_t *)ptr;
     
-    //syslog(LOG_ERR, "cleanupTcpMasterThread %p\n", ptr);
+    //syslog(LOG_ERR, "cleanupTcpClientThread %p\n", ptr);
     
     if (pModbusContext)
     {
@@ -63,10 +63,10 @@ void cleanupTcpMasterThread(void *ptr)
     }
 }
 
-void *startTcpMasterThread(void *arg)
+void *startTcpClientThread(void *arg)
 {
     //init modbus device
-    TModbusMasterConfiguration *psModbusConfiguration_l = (TModbusMasterConfiguration *)arg;
+    TModbusClientConfiguration *psModbusConfiguration_l = (TModbusClientConfiguration *)arg;
     
     //set realtime priority of the thread
     if(setprio(20, SCHED_RR) < 0)
@@ -94,7 +94,7 @@ void *startTcpMasterThread(void *arg)
         pthread_exit(0);
     }
 
-    pthread_cleanup_push(cleanupTcpMasterThread, pModbusContext);
+    pthread_cleanup_push(cleanupTcpClientThread, pModbusContext);
     //syslog(LOG_ERR, "pthread_cleanup_push %p\n", pModbusContext);
     
 #ifdef STRETCH
@@ -184,7 +184,7 @@ void *startTcpMasterThread(void *arg)
                     nextEvent.ptModbusAction->i8uResetStatusProcessImageBitOffset,
                     nextEvent.ptModbusAction->i32uStatusByteProcessImageOffset);
  
-                reset_modbus_master_status(
+                reset_modbus_client_status(
                     psModbusConfiguration_l->tModbusDeviceConfig.i32uDeviceStatusResetByteProcessImageByteOffset,
                     psModbusConfiguration_l->tModbusDeviceConfig.i32uDeviceStatusByteProcessImageOffset);
 
@@ -220,10 +220,10 @@ void *startTcpMasterThread(void *arg)
                 //additional sleep if tv_earliest_next_trigger_time is not yet overdue
                 clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &tv_earliest_next_trigger_time, NULL);
         
-                //set the modbus slave address for the next command
-                if (modbus_set_slave(pModbusContext, nextEvent.ptModbusAction->i8uSlaveAddress) < 0)
+                //set the modbus server address for the next command
+                if (modbus_set_slave(pModbusContext, nextEvent.ptModbusAction->i8uServerAddress) < 0)
                 {
-                    syslog(LOG_ERR, "Set Modbus slave address for next command failed: %s\n", modbus_strerror(errno));
+                    syslog(LOG_ERR, "Set Modbus server address for next command failed: %s\n", modbus_strerror(errno));
                 }
         
                 int32_t ret_val_modbus_action = processModbusAction(pModbusContext, &nextEvent, buffer);
@@ -288,11 +288,11 @@ void *startTcpMasterThread(void *arg)
 
 
 
-void cleanupRtuMasterThread(void *ptr)
+void cleanupRtuClientThread(void *ptr)
 {
     modbus_t *pModbusContext = (modbus_t *)ptr;
     
-    //syslog(LOG_ERR, "cleanupRtuMasterThread %p\n", ptr);
+    //syslog(LOG_ERR, "cleanupRtuClientThread %p\n", ptr);
     
     if(pModbusContext)
     {
@@ -302,24 +302,24 @@ void cleanupRtuMasterThread(void *ptr)
 }
 
 
-void *startRtuMasterThread(void *arg)
+void *startRtuClientThread(void *arg)
 {
     //init modbus device
-    TModbusMasterConfiguration *psModbusConfiguration_l = (TModbusMasterConfiguration *)arg;
+    TModbusClientConfiguration *psModbusConfiguration_l = (TModbusClientConfiguration *)arg;
     int logRtuPath = 0;
 
     /* Wait for serial device getting ready(Readable, Writable) */
     while(access(psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig.sz8DeviceFilePath,
                                                             R_OK | W_OK)) {
         if (!logRtuPath) {
-            syslog(LOG_INFO, "RTU Master waiting for serial device:%s\n",
+            syslog(LOG_INFO, "RTU Client waiting for serial device:%s\n",
                 psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig.sz8DeviceFilePath);
             logRtuPath = 1;
         }
         /* Repeat checking in 1 Sec */
         sleep(1);
     }
-    syslog(LOG_INFO, "RTU Master got serial device:%s\n",
+    syslog(LOG_INFO, "RTU Client got serial device:%s\n",
         psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig.sz8DeviceFilePath);
 
     //set realtime priority of the thread
@@ -373,7 +373,7 @@ void *startRtuMasterThread(void *arg)
         syslog(LOG_ERR, "Set Modbus serial mode failed: %s\n", modbus_strerror(errno));
     }
 #endif
-    pthread_cleanup_push(cleanupRtuMasterThread, pModbusContext);
+    pthread_cleanup_push(cleanupRtuClientThread, pModbusContext);
     //syslog(LOG_ERR, "pthread_cleanup_push %p\n", pModbusContext);
     
 
@@ -480,7 +480,7 @@ void *startRtuMasterThread(void *arg)
         }
 #endif        
         
-        reset_modbus_master_status(
+        reset_modbus_client_status(
             psModbusConfiguration_l->tModbusDeviceConfig.i32uDeviceStatusResetByteProcessImageByteOffset,
             psModbusConfiguration_l->tModbusDeviceConfig.i32uDeviceStatusByteProcessImageOffset);
 
@@ -515,10 +515,10 @@ void *startRtuMasterThread(void *arg)
         //additional sleep if tv_earliest_next_trigger_time is not yet overdue
         clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &tv_earliest_next_trigger_time, NULL);
         
-        //set the modbus slave address for the next command
-        if(modbus_set_slave(pModbusContext, nextEvent.ptModbusAction->i8uSlaveAddress) < 0)
+        //set the modbus server address for the next command
+        if(modbus_set_slave(pModbusContext, nextEvent.ptModbusAction->i8uServerAddress) < 0)
         {
-            syslog(LOG_ERR, "Set Modbus slave address for next command failed: %s\n", modbus_strerror(errno));
+            syslog(LOG_ERR, "Set Modbus server address for next command failed: %s\n", modbus_strerror(errno));
         }
         
         int32_t ret_val_modbus_action = processModbusAction(pModbusContext, &nextEvent, buffer);
@@ -530,9 +530,9 @@ void *startRtuMasterThread(void *arg)
         if (ret_val_modbus_action < 0)
         {
             syslog(LOG_ERR,
-                "modbus rtu action device: %s, slave address: %d function: 0x%02X, address: %d failed %d/%d/%d\n",
+                "modbus rtu action device: %s, server address: %d function: 0x%02X, address: %d failed %d/%d/%d\n",
                 ptRtuConfig_l->sz8DeviceFilePath,
-                (int32_t)nextEvent.ptModbusAction->i8uSlaveAddress,
+                (int32_t)nextEvent.ptModbusAction->i8uServerAddress,
                 (int32_t)nextEvent.ptModbusAction->eFunctionCode,
                 (int32_t)nextEvent.ptModbusAction->i32uStartRegister,
                 ret_val_modbus_action,
@@ -559,9 +559,9 @@ void *startRtuMasterThread(void *arg)
         else
         {
             syslog(LOG_ERR,
-                "modbus rtu action device: %s, slave address: %d function: 0x%02X, address: %d succeeded\n",
+                "modbus rtu action device: %s, server address: %d function: 0x%02X, address: %d succeeded\n",
                 ptRtuConfig_l->sz8DeviceFilePath,
-                (int32_t)nextEvent.ptModbusAction->i8uSlaveAddress,
+                (int32_t)nextEvent.ptModbusAction->i8uServerAddress,
                 (int32_t)nextEvent.ptModbusAction->eFunctionCode,
                 (int32_t)nextEvent.ptModbusAction->i32uStartRegister);
         }

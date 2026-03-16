@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2023 KUNBUS GmbH
+SPDX-FileCopyrightText: 2023-2026 KUNBUS GmbH
 
 SPDX-License-Identifier: GPL-2.0-or-later
 -->
@@ -7,8 +7,8 @@ SPDX-License-Identifier: GPL-2.0-or-later
 # Input/Output mechanisms
 ## Configuration
 
-### Slave
-This example shows that the Slave (here RTU) gets configured with 32 output and 32 input registers
+### Server
+This example shows that the Server (here RTU) gets configured with 32 output and 32 input registers
 as well as the communication settings. Both are saved as seperated arrays of two different objects
 `inp` and `out`. The rest of the configuration is for piControl.
 
@@ -19,11 +19,11 @@ as well as the communication settings. Both are saved as seperated arrays of two
     "type": "VIRTUAL",
     "productType": "24578",
     "position": "64",
-    "name": "ModbusRTU Slave",
-    "bmk": "ModbusRTU Slave",
+    "name": "ModbusRTU Server",
+    "bmk": "ModbusRTU Server",
     "inpVariant": 0,
     "outVariant": 0,
-    "comment": "ModbusRTU Slave",
+    "comment": "ModbusRTU Server",
     "offset": 1237,
     "inp": {
         "0": [
@@ -137,10 +137,10 @@ as well as the communication settings. Both are saved as seperated arrays of two
 }
 ```
 
-### Master
-The next example shows that the Master (here TCP) gets configured with 32 output and 32 input registers,
+### Client
+The next example shows that the Client (here TCP) gets configured with 32 output and 32 input registers,
 32 output and 32 input bits, modbus status resets (not mutable), actions status resets (mutable),
-master status reset, as well as the communication settings. The action status resets are meant to
+client status reset, as well as the communication settings. The action status resets are meant to
 configure
 [communication timeouts and communication pauses](https://revolutionpi.com/forum/viewtopic.php?t=943),
 which is poorly documented.
@@ -150,15 +150,15 @@ object holds the output registers and bits. The rest of the configuration is for
 ```json
 {
     "GUID": "4985b9e8-6ff8-8520-9a1c-a93a3bf5444a",
-    "id": "device_ModbusTCPMaster_20180122_1_1_001",
+    "id": "device_ModbusTCPClient_20180122_1_1_001",
     "type": "VIRTUAL",
     "productType": "24579",
     "position": "65",
-    "name": "ModbusTCP Master",
-    "bmk": "ModbusTCP Master",
+    "name": "ModbusTCP Client",
+    "bmk": "ModbusTCP Client",
     "inpVariant": 0,
     "outVariant": 0,
-    "comment": "ModbusTCP Master",
+    "comment": "ModbusTCP Client",
     "offset": 1405,
     "inp": {
         "0": [
@@ -214,7 +214,7 @@ object holds the output registers and bits. The rest of the configuration is for
         ],
 ...
         "96": [
-            "Modbus_Master_Status",
+            "Modbus_Client_Status",
             "255",
             "8",
             "100",
@@ -290,7 +290,7 @@ object holds the output registers and bits. The rest of the configuration is for
             "31"
         ],
         "96": [
-            "Master_Status_Reset",
+            "Client_Status_Reset",
             "0",
             "8",
             "173",
@@ -302,7 +302,7 @@ object holds the output registers and bits. The rest of the configuration is for
     },
     "mem": {
         "0": [
-            "slave_IP_address",
+            "server_IP_address",
             "192.168.0.10",
             "128",
             "174",
@@ -312,7 +312,7 @@ object holds the output registers and bits. The rest of the configuration is for
             ""
         ],
         "1": [
-            "slave_TCP_port",
+            "server_TCP_port",
             "502",
             "16",
             "190",
@@ -338,7 +338,7 @@ It depends on `piTest/piControlIf.h` and the modules functions
   * piControlWaitForEvent
 
 The access is concentrated mostly within the file `ComAndDataProcessor.c` and lesser `piProcessImageAccess.c`,
-but there are also a few calls from `piConfigParser/piConfigParser.c`, `piModbusSlave.c`, and `piModbusMaster.c`
+but there are also a few calls from `piConfigParser/piConfigParser.c`, `piModbusServer.c`, and `piModbusClient.c`
 which could and should be hidden away behind an interface.
 
 ![Dependencies of piControl](dep_picontrol.png)
@@ -352,11 +352,11 @@ libmodbus' API, apparently already an issue in the past and handled by the pre-p
 
 For each and every instance of a modbus device there is a new thread started within the `Scheduler` module.
 The full functionality like coils and holding registers currently are supported by the function
-`processModbusAction` from the `ComAndDataProcessor` module, which is used by the modbus *master*.
+`processModbusAction` from the `ComAndDataProcessor` module, which is used by the modbus *client*.
 
-The slave on the other hand is limited by the functionality of
+The server on the other hand is limited by the functionality of
 [libmodbus mapping](https://libmodbus.org/docs/v3.1.7/modbus_mapping_new.html).
-libmodbus provides following types which could be used with slave/server communication:
+libmodbus provides following types which could be used with client/server communication:
 
   * bits
   * input_bits

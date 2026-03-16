@@ -1,13 +1,13 @@
 /*
- * SPDX-FileCopyrightText: 2024 KUNBUS GmbH
+ * SPDX-FileCopyrightText: 2024-2026 KUNBUS GmbH
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
 /*!
  *
- * Project: piModbusSlave
- * (C)    : KUNBUS GmbH, Heerweg 15C, 73370 Denkendorf, Germany
+ * Project: piModbusServer
+ * (C)    : KUNBUS GmbH, Magirusstraße 7, 73760 Ostfildern, Germany
  *
  */
 
@@ -29,34 +29,34 @@
 #define PICONFIG_FILE					"/etc/revpi/config.rsc"
 
 //TODO: use defines from common_define.h
-#define MODBUS_SLAVE_TCP_PI_PRODUCT_TYPE    "24577"
-#define MODBUS_SLAVE_RTU_PI_PRODUCT_TYPE    "24578"
-#define MODBUS_MASTER_TCP_PI_PRODUCT_TYPE   "24579"
-#define MODBUS_MASTER_RTU_PI_PRODUCT_TYPE   "24580"
+#define MODBUS_SERVER_TCP_PI_PRODUCT_TYPE    "24577"
+#define MODBUS_SERVER_RTU_PI_PRODUCT_TYPE    "24578"
+#define MODBUS_CLIENT_TCP_PI_PRODUCT_TYPE   "24579"
+#define MODBUS_CLIENT_RTU_PI_PRODUCT_TYPE   "24580"
 
-#define MODBUS_SLAVE_PARAMETER_ARRAY_POSITION 1
+#define MODBUS_SERVER_PARAMETER_ARRAY_POSITION 1
 
-#define MODBUS_MASTER_TCP_JSON_KEY_IP_ADDRESS           "0"
-#define MODBUS_MASTER_TCP_JSON_KEY_TCP_PORT             "1"
-#define MODBUS_MASTER_TCP_JSON_KEY_TCP_MAX_CONNECTIONS  "2"
+#define MODBUS_CLIENT_TCP_JSON_KEY_IP_ADDRESS           "0"
+#define MODBUS_CLIENT_TCP_JSON_KEY_TCP_PORT             "1"
+#define MODBUS_CLIENT_TCP_JSON_KEY_TCP_MAX_CONNECTIONS  "2"
 
-#define MODBUS_SLAVE_TCP_JSON_KEY_TCP_PORT              "0"
-#define MODBUS_SLAVE_TCP_JSON_KEY_TCP_MAX_CONNECTIONS   "1"
+#define MODBUS_SERVER_TCP_JSON_KEY_TCP_PORT              "0"
+#define MODBUS_SERVER_TCP_JSON_KEY_TCP_MAX_CONNECTIONS   "1"
 
-#define MODBUS_SLAVE_RTU_JSON_KEY_DEVICE_PATH "0"
-#define MODBUS_SLAVE_RTU_JSON_KEY_BAUDRATE "1"
-#define MODBUS_SLAVE_RTU_JSON_KEY_PARITY "2"
-#define MODBUS_SLAVE_RTU_JSON_KEY_DATABITS "3"
-#define MODBUS_SLAVE_RTU_JSON_KEY_STOPBITS "4"
-#define MODBUS_SLAVE_RTU_MODBUS_ADDRESS	"5"
-#define MODBUS_SLAVE_RTU_JSON_PARITY_VALUE_NONE '0'
-#define MODBUS_SLAVE_RTU_JSON_PARITY_VALUE_EVEN '1'
-#define MODBUS_SLAVE_RTU_JSON_PARITY_VALUE_ODD '2'
+#define MODBUS_SERVER_RTU_JSON_KEY_DEVICE_PATH "0"
+#define MODBUS_SERVER_RTU_JSON_KEY_BAUDRATE "1"
+#define MODBUS_SERVER_RTU_JSON_KEY_PARITY "2"
+#define MODBUS_SERVER_RTU_JSON_KEY_DATABITS "3"
+#define MODBUS_SERVER_RTU_JSON_KEY_STOPBITS "4"
+#define MODBUS_SERVER_RTU_MODBUS_ADDRESS	"5"
+#define MODBUS_SERVER_RTU_JSON_PARITY_VALUE_NONE '0'
+#define MODBUS_SERVER_RTU_JSON_PARITY_VALUE_EVEN '1'
+#define MODBUS_SERVER_RTU_JSON_PARITY_VALUE_ODD '2'
 
 
-void get_slave_device_config_list(struct TMBSlaveConfHead *p_mbSlaveConfHead_p);
-void get_master_device_config_list(struct TMBMasterConfHead *p_mbMasterConfHead_p);
+void get_server_device_config_list(struct TMBServerConfHead *p_mbServerConfHead_p);
+void get_client_device_config_list(struct TMBClientConfHead *p_mbClientConfHead_p);
 void free_config_buffer(void);
-void free_modbus_master_config_data(struct TMBMasterConfHead *p_mbMasterConfHead_p);
+void free_modbus_client_config_data(struct TMBClientConfHead *p_mbClientConfHead_p);
 
 #endif /*PI_CONFIG_PARSER_H_*/
