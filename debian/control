@@ -9,6 +9,7 @@ Vcs-Git: https://gitlab.com/revolutionpi/revpi-modbus.git -b debian/trixie
 Build-Depends:
   cmake,
   debhelper-compat (= 13),
+  dh-sysuser,
   libjson-c-dev,
   libmodbus-dev (>= 3.1.6),
   pkgconf,
