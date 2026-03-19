@@ -12,6 +12,22 @@ ExecStart=/usr/sbin/piModbusMaster
 StandardOutput=journal
 StandardError=journal
 Restart=on-failure
+User=revpi-modbus
+Group=revpi-modbus
+SupplementaryGroups=dialout picontrol
+
+# Sandboxing options
+ProtectSystem=strict
+ProtectControlGroups=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+
+# Restrict file system access to the following directories
+InaccessiblePaths=/boot /home /root
+
+# Allow realtime scheduling
+LimitRTPRIO=99
+LimitRTTIME=infinity
 
 [Install]
 WantedBy=multi-user.target
