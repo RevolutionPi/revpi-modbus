@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2024 KUNBUS GmbH
+# SPDX-FileCopyrightText: 2024-2026 KUNBUS GmbH
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -6,20 +6,14 @@ include:
   - project: "revolutionpi/infrastructure/ci-templates"
     file: "base.yml"
   - project: "revolutionpi/infrastructure/ci-templates"
+    file: "/package-devel.yml"
+  - project: "revolutionpi/infrastructure/ci-templates"
     file: "/reuse-lint.yml"
+  - project: "revolutionpi/infrastructure/ci-templates"
+    file: "/check-commit/lint-commit.yml"
+  - local: debian/gitlab-ci.yml
+    rules:
+      - if: $CI_COMMIT_BRANCH =~ /^(raspios|debian)\/.*/
+        exists:
+          - debian/gitlab-ci.yml
 
-variables:
-  GIT_SUBMODULE_STRATEGY: recursive
-  GIT_SUBMODULE_DEPTH: 1
-
-static-analysis:
-  stage: lint
-  image: snowstep/llvm:bullseye
-  tags:
-    - self-hosted
-    - docker
-    - host-amd64
-  script:
-    - apt update && apt install -y libmodbus-dev libjson-c-dev
-    - clang-tidy src/*.c src/*.h -- -IpiControl -std=c99
-    
