@@ -1,3 +1,16 @@
+revpi-modbus (1.3.0-1+deb12+1) bookworm; urgency=medium
+
+  [ Ramiro Gsponer ]
+  * fix: enum/int type mismatches in piConfigParser
+  * fix: calloc argument order in piModbusMaster
+
+  [ Sven Sager ]
+  * feat(systemd): Run services with unprivileged system user
+  * feat(systemd): Enhance security with sandboxing/capability restrictions
+  * feat(deb): Create sysuser for daemon execution
+
+ -- Sven Sager <s.sager@kunbus.com>  Thu, 19 Mar 2026 16:42:08 +0100
+
 revpi-modbus (1.2.0-1+deb12+2) bookworm; urgency=medium
 
   * feat(deb): Move `firewall-cmd --reload` to postrm script
