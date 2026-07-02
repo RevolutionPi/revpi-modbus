@@ -21,8 +21,12 @@ Architecture: any
 Depends:
   ${shlibs:Depends},
   ${misc:Depends}
+Suggests:
+  revpi-tools (>= 6.0.0),
 Replaces: pimodbus-master (<< 1.1.0-1+revpi11+2)
-Breaks: pimodbus-master (<< 1.1.0-1+revpi11+2)
+Breaks: 
+  pimodbus-master (<< 1.1.0-1+revpi11+2),
+  revpi-tools (<< 6.0.0),
 Description: Revolution Pi Modbus client
  Connect to ModbusRTU or ModbusTCP servers (formerly slaves) from
  this RevPi device.
@@ -34,8 +38,12 @@ Architecture: any
 Depends:
   ${shlibs:Depends},
   ${misc:Depends}
+Suggests:
+  revpi-tools (>= 6.0.0),
 Replaces: pimodbus-slave (<< 1.1.0-1+revpi11+2)
-Breaks: pimodbus-slave (<< 1.1.0-1+revpi11+2)
+Breaks:
+  pimodbus-slave (<< 1.1.0-1+revpi11+2),
+  revpi-tools (<< 6.0.0),
 Description: Revolution Pi Modbus server
  Use the RevPi device as a ModbusRTU or ModbusTCP server (formerly
  slave). This will allow ModbusRTU or ModbusTCP clients (formerly
