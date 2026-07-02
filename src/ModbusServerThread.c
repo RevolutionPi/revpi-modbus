@@ -1,13 +1,13 @@
 /*
- * SPDX-FileCopyrightText: 2023 KUNBUS GmbH
+ * SPDX-FileCopyrightText: 2023-2026 KUNBUS GmbH
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
 /*!
  *
- * Project: piModbusSlave
- * (C)    : KUNBUS GmbH, Heerweg 15C, 73370 Denkendorf, Germany
+ * Project: piModbusServer
+ * (C)    : KUNBUS GmbH, Magirusstraße 7, 73760 Ostfildern, Germany
  *
  */
 
@@ -23,18 +23,18 @@
 #include <pthread.h>
 #include <syslog.h>
 
-#include "ModbusSlaveThread.h"
+#include "ModbusServerThread.h"
 
 #include "piProcessImageAccess.h"
 
-struct TMBSlaveConfHead mbSlaveConfHead;
+struct TMBServerConfHead mbServerConfHead;
 
 //#define MODBUS_DEBUG
 
 /************************************************************************/
-/** @ brief start routine for a modbus tcp slave thread
+/** @ brief start routine for a modbus tcp server thread
  *  
- *	@param[in] arg configuration parameter for the modbus tcp slave of type TModbusSlaveConfiguration
+ *	@param[in] arg configuration parameter for the modbus tcp server of type TModbusServerConfiguration
  *
  *	@return returns NULL if initialisation failed
  *
@@ -42,27 +42,27 @@ struct TMBSlaveConfHead mbSlaveConfHead;
  *
  */
 /************************************************************************/
-struct hndlTcpSlaveThread
+struct hndlTcpServerThread
 {
     modbus_mapping_t* mbMapping;
-    modbus_t *mb_slave;
+    modbus_t *mb_server;
     fd_set refset;
 };
 
-void cleanupTcpSlaveThread(void *ptr)
+void cleanupTcpServerThread(void *ptr)
 {
     int fd;
-    struct hndlTcpSlaveThread *h = (struct hndlTcpSlaveThread *)ptr;
+    struct hndlTcpServerThread *h = (struct hndlTcpServerThread *)ptr;
     
-    syslog(LOG_NOTICE, "cleanupTcpSlaveThread\n");
+    syslog(LOG_NOTICE, "cleanupTcpServerThread\n");
     
     if (h->mbMapping)
         modbus_mapping_free(h->mbMapping);
     
-    if (h->mb_slave)
+    if (h->mb_server)
     {
-        modbus_close(h->mb_slave);
-        modbus_free(h->mb_slave);
+        modbus_close(h->mb_server);
+        modbus_free(h->mb_server);
     }
 
     for (fd = 0; fd < __FD_SETSIZE; fd++)
@@ -75,10 +75,10 @@ void cleanupTcpSlaveThread(void *ptr)
     }
 }
 
-void *startTcpSlaveThread(void *arg)
+void *startTcpServerThread(void *arg)
 {
-    TModbusSlaveConfiguration *psModbusConfiguration_l = (TModbusSlaveConfiguration*)arg;
-    struct hndlTcpSlaveThread hdl;
+    TModbusServerConfiguration *psModbusConfiguration_l = (TModbusServerConfiguration*)arg;
+    struct hndlTcpServerThread hdl;
     int ret;
     int server_socket = -1;
     fd_set rdset;
@@ -92,9 +92,9 @@ void *startTcpSlaveThread(void *arg)
     /* Clear the reference set of socket */
     FD_ZERO(&hdl.refset);
     hdl.mbMapping = NULL;
-    hdl.mb_slave = NULL;
+    hdl.mb_server = NULL;
 
-    pthread_cleanup_push(cleanupTcpSlaveThread, &hdl);
+    pthread_cleanup_push(cleanupTcpServerThread, &hdl);
     
     hdl.mbMapping = modbus_mapping_new(
         psModbusConfiguration_l->tModbusDataConfig.u16Coils,
@@ -109,20 +109,20 @@ void *startTcpSlaveThread(void *arg)
     
     char st8TcpPort[10];
     snprintf(st8TcpPort, sizeof(st8TcpPort), "%d", psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig.i32uPort);
-    hdl.mb_slave = modbus_new_tcp_pi(psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig.szTcpIpAddress, st8TcpPort);
-    if (!hdl.mb_slave) {
+    hdl.mb_server = modbus_new_tcp_pi(psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig.szTcpIpAddress, st8TcpPort);
+    if (!hdl.mb_server) {
         syslog(LOG_ERR, "Failed to create the modbus context\n");
         pthread_exit(0);
     }
     
 #ifdef MODBUS_DEBUG
-    modbus_set_debug(mb_slave, TRUE);
+    modbus_set_debug(mb_server, TRUE);
 #endif
     
-    //run slave
+    //run server
     do
     {
-        ret = modbus_tcp_pi_listen(hdl.mb_slave, psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig.maxModbusConnections);
+        ret = modbus_tcp_pi_listen(hdl.mb_server, psModbusConfiguration_l->tModbusDeviceConfig.uProt.tTcpConfig.maxModbusConnections);
         if (ret == -1)
         {
             syslog(LOG_ERR, "Failed to create a tcp/ip socket: %s\n", modbus_strerror(errno));
@@ -144,7 +144,7 @@ void *startTcpSlaveThread(void *arg)
             
     while (1)
     {
-        int master_socket = 0;
+        int client_socket = 0;
         rdset = hdl.refset;
         ret = select(fdmax + 1, &rdset, NULL, NULL, NULL);
         if (ret == -1)
@@ -158,14 +158,14 @@ void *startTcpSlaveThread(void *arg)
         }
 
         /* Run through the existing connections looking for data to be read */
-        for (master_socket = 0; master_socket <= fdmax; master_socket++)
+        for (client_socket = 0; client_socket <= fdmax; client_socket++)
         {
-            if (!FD_ISSET(master_socket, &rdset))
+            if (!FD_ISSET(client_socket, &rdset))
             {
                 continue;
             }
         
-            if (master_socket == server_socket)
+            if (client_socket == server_socket)
             {
                 syslog(LOG_INFO, "New connection request on socket %d\n", server_socket);
                 /* A client is asking a new connection */
@@ -198,17 +198,17 @@ void *startTcpSlaveThread(void *arg)
             }
             else
             {
-                modbus_set_socket(hdl.mb_slave, master_socket);
+                modbus_set_socket(hdl.mb_server, client_socket);
                 
-                syslog(LOG_DEBUG, "Check request on socket %d/%d\n", master_socket, fdmax);
-                if (process_modbus_request(hdl.mb_slave, hdl.mbMapping, psModbusConfiguration_l) < 0)
+                syslog(LOG_DEBUG, "Check request on socket %d/%d\n", client_socket, fdmax);
+                if (process_modbus_request(hdl.mb_server, hdl.mbMapping, psModbusConfiguration_l) < 0)
                 {
-                    syslog(LOG_INFO, "Connection closed on socket %d\n", master_socket);
-                    close(master_socket);
+                    syslog(LOG_INFO, "Connection closed on socket %d\n", client_socket);
+                    close(client_socket);
                     
                     /* Remove from reference set */
-                    FD_CLR(master_socket, &hdl.refset);
-                    if (master_socket == fdmax)
+                    FD_CLR(client_socket, &hdl.refset);
+                    if (client_socket == fdmax)
                     {
                         fdmax--;
                     }
@@ -225,9 +225,9 @@ void *startTcpSlaveThread(void *arg)
 
 
 /************************************************************************/
-/** @ brief start routine for a modbus rtu slave thread
+/** @ brief start routine for a modbus rtu server thread
  *  
- *	@param[in] arg configuration parameter for the modbus rtu slave of type TModbusSlaveConfiguration
+ *	@param[in] arg configuration parameter for the modbus rtu server of type TModbusServerConfiguration
  *
  *	@return returns NULL if initialisation failed
  *
@@ -235,50 +235,50 @@ void *startTcpSlaveThread(void *arg)
  *
  */
 /************************************************************************/
-struct hndlRtuSlaveThread
+struct hndlRtuServerThread
 {
     modbus_mapping_t* mbMapping;
-    modbus_t *mb_slave;
+    modbus_t *mb_server;
 };
 
-void cleanupRtuSlaveThread(void *ptr)
+void cleanupRtuServerThread(void *ptr)
 {
-    struct hndlRtuSlaveThread *h = (struct hndlRtuSlaveThread *)ptr;
+    struct hndlRtuServerThread *h = (struct hndlRtuServerThread *)ptr;
     
-    syslog(LOG_INFO, "cleanupRtuSlaveThread\n");
+    syslog(LOG_INFO, "cleanupRtuServerThread\n");
     
     if (h->mbMapping)
         modbus_mapping_free(h->mbMapping);
     
-    if (h->mb_slave)
+    if (h->mb_server)
     {
-        modbus_close(h->mb_slave);
-        modbus_free(h->mb_slave);
+        modbus_close(h->mb_server);
+        modbus_free(h->mb_server);
     }
 }
-void *startRtuSlaveThread(void *arg)
+void *startRtuServerThread(void *arg)
 {
-    TModbusSlaveConfiguration *psModbusConfiguration_l = (TModbusSlaveConfiguration*)arg;
-    struct hndlRtuSlaveThread hdl;
+    TModbusServerConfiguration *psModbusConfiguration_l = (TModbusServerConfiguration*)arg;
+    struct hndlRtuServerThread hdl;
 
-    hdl.mb_slave = NULL;
+    hdl.mb_server = NULL;
     hdl.mbMapping = NULL;
     
-    pthread_cleanup_push(cleanupRtuSlaveThread, &hdl);
+    pthread_cleanup_push(cleanupRtuServerThread, &hdl);
     int logRtuPath = 0; // late declaration prevents Wclobbered error
     
     /* Wait for serial device getting ready(Readable, Writable) */
     while(access(psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig.sz8DeviceFilePath,
                                                         R_OK | W_OK)) {
         if (!logRtuPath) {
-            syslog(LOG_INFO, "RTU Slave waiting for serial device:%s\n",
+            syslog(LOG_INFO, "RTU Server waiting for serial device:%s\n",
                 psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig.sz8DeviceFilePath);
             logRtuPath = 1;
         }
         /* Repeat checking in 1 Sec */
         sleep(1);
     }
-    syslog(LOG_INFO, "RTU Slave got serial device:%s\n",
+    syslog(LOG_INFO, "RTU Server got serial device:%s\n",
         psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig.sz8DeviceFilePath);
 
     hdl.mbMapping = modbus_mapping_new(
@@ -292,37 +292,37 @@ void *startRtuSlaveThread(void *arg)
         pthread_exit(0);
     }
 
-    hdl.mb_slave = modbus_new_rtu(
+    hdl.mb_server = modbus_new_rtu(
         psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig.sz8DeviceFilePath,
         psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig.i32uBaud,
         psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig.cParity,
         psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig.i8uDatabits,
         psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig.i8uStopbits);
 
-    if (!hdl.mb_slave) {
+    if (!hdl.mb_server) {
         syslog(LOG_ERR, "Failed to create the modbus context\n");
         pthread_exit(0);
     }
     
 #ifdef MODBUS_DEBUG
-    modbus_set_debug(hdl.mb_slave, TRUE);
+    modbus_set_debug(hdl.mb_server, TRUE);
 #endif
     
-    if (modbus_set_slave(hdl.mb_slave, psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig.u8DeviceModbusAddress) == -1)
+    if (modbus_set_slave(hdl.mb_server, psModbusConfiguration_l->tModbusDeviceConfig.uProt.tRtuConfig.u8DeviceModbusAddress) == -1)
     {
-        syslog(LOG_ERR, "Set slave address failed: %s\n", modbus_strerror(errno));
+        syslog(LOG_ERR, "Set server address failed: %s\n", modbus_strerror(errno));
         pthread_exit(0);
     }
     
     
-    if (modbus_connect(hdl.mb_slave) == -1) {
+    if (modbus_connect(hdl.mb_server) == -1) {
         syslog(LOG_ERR, "Unable to connect: %s\n", modbus_strerror(errno));
         pthread_exit(0);
     }	
 
     while (1)
     {
-        process_modbus_request(hdl.mb_slave, hdl.mbMapping, psModbusConfiguration_l);
+        process_modbus_request(hdl.mb_server, hdl.mbMapping, psModbusConfiguration_l);
     }
     
     pthread_cleanup_pop(1); // this makro closes the loop of pthread_cleanup_push
@@ -333,7 +333,7 @@ void *startRtuSlaveThread(void *arg)
 /************************************************************************/
 /** @ brief common modbus request processing 
  *  
- *	@param mb_slave_p the modbus context
+ *	@param mb_server_p the modbus context
  *	@param mbMapping_p the modbus mapping
  *	@patram psModbusConfiguration_p the modbus device configuration
  *
@@ -343,12 +343,12 @@ void *startRtuSlaveThread(void *arg)
  *
  */
 /************************************************************************/
-int32_t process_modbus_request(modbus_t *mb_slave_p, modbus_mapping_t* mbMapping_p, TModbusSlaveConfiguration *psModbusConfiguration_p)
+int32_t process_modbus_request(modbus_t *mb_server_p, modbus_mapping_t* mbMapping_p, TModbusServerConfiguration *psModbusConfiguration_p)
 {
     uint8_t req[MODBUS_TCP_MAX_ADU_LENGTH];     // request buffer TCP
     int32_t len = 0;                            //length of the request/response
     
-    len = modbus_receive(mb_slave_p, req);
+    len = modbus_receive(mb_server_p, req);
     if (len > 0)
     {
         /*	due to seperated input and output areas in the pi process image,
@@ -356,12 +356,12 @@ int32_t process_modbus_request(modbus_t *mb_slave_p, modbus_mapping_t* mbMapping
             the modbus functions READ_INPUT_REGISTERS and READ_DISCRETE_INPUTS
             therefor only for this modbus functions a read from the pi process image is performed
          */
-        uint8_t mb_function_code = req[modbus_get_header_length(mb_slave_p)];	//the modbus function code for the current request
+        uint8_t mb_function_code = req[modbus_get_header_length(mb_server_p)];	//the modbus function code for the current request
         if ((mb_function_code == eREAD_INPUT_REGISTERS) || (mb_function_code == eREAD_DISCRETE_INPUTS)) 
         {
             readModbusDataFromProcessImage(mbMapping_p, &(psModbusConfiguration_p->tProcessImageConfig));
         }
-        len = modbus_reply(mb_slave_p, req, len, mbMapping_p);
+        len = modbus_reply(mb_server_p, req, len, mbMapping_p);
         if (len == -1)
         {
             syslog(LOG_ERR, "modbus reply failed\n");

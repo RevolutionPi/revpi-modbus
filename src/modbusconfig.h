@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
 /*
- * Copyright 2023 KUNBUS GmbH
+ * SPDX-FileCopyrightText: 2023-2026 KUNBUS GmbH
  */
 
 #pragma once
@@ -56,7 +56,7 @@ typedef enum
     eREAD_EXCEPTION_STATUS    = 0x07,	//serial line only, not supported by libmodbus v3.0.6
     eWRITE_MULTIPLE_COILS     = 0x0F,
     eWRITE_MULTIPLE_REGISTERS = 0x10,
-    eREPORT_SLAVE_ID          = 0x11,
+    eREPORT_SERVER_ID          = 0x11,
     eWRITE_MASK_REGISTER      = 0x16,
     eWRITE_AND_READ_REGISTERS = 0x17,
 } EModbusFunction;
@@ -86,7 +86,7 @@ typedef struct
 typedef struct
 {
     uint16_t i16uActionID;
-    uint8_t i8uSlaveAddress;			//modbus slave address from 0(broadcast) to 
+    uint8_t i8uServerAddress;			//modbus server address from 0(broadcast) to 
     EModbusFunction eFunctionCode;
     uint32_t i32uStartRegister;			//modbus adresses from 0x1 to 0x10000
     uint16_t i16uRegisterCount;			//data length in bits, (bytes) or words, depends on modbus function 
@@ -112,7 +112,7 @@ typedef struct
     uint16_t u16Coils;				// # of coils
     uint16_t u16InputRegisters;		// # of input registers
     uint16_t u16HoldingRegisters;	// # of holding registers
-}TModbusSlaveDataSizeConfig;
+}TModbusServerDataSizeConfig;
 
 typedef struct
 {
@@ -145,29 +145,29 @@ typedef struct
     TModbusDeviceConfiguration tModbusDeviceConfig;
     int32_t i32ActionCount;
     SLIST_HEAD(TMBActionListHead, TMBActionEntry) mbActionListHead; // Array of demanded actions, last element must be NULL
-} TModbusMasterConfiguration;
+} TModbusClientConfiguration;
 
 typedef struct
 {
     TModbusDeviceConfiguration tModbusDeviceConfig;
-    TModbusSlaveDataSizeConfig tModbusDataConfig;
+    TModbusServerDataSizeConfig tModbusDataConfig;
     TProcessImageConfiguration tProcessImageConfig;
-} TModbusSlaveConfiguration;
+} TModbusServerConfiguration;
 
-struct TMBSlaveConfigEntry
+struct TMBServerConfigEntry
 {
-    TModbusSlaveConfiguration mbSlaveConfig;
-    SLIST_ENTRY(TMBSlaveConfigEntry) entries;
+    TModbusServerConfiguration mbServerConfig;
+    SLIST_ENTRY(TMBServerConfigEntry) entries;
 };
 
-struct TMBMasterConfigEntry
+struct TMBClientConfigEntry
 {
-    TModbusMasterConfiguration mbMasterConfig;
-    SLIST_ENTRY(TMBMasterConfigEntry) entries;
+    TModbusClientConfiguration mbClientConfig;
+    SLIST_ENTRY(TMBClientConfigEntry) entries;
 };
 
-SLIST_HEAD(TMBSlaveConfHead, TMBSlaveConfigEntry);
-extern struct TMBSlaveConfHead mbSlaveConfHead;
+SLIST_HEAD(TMBServerConfHead, TMBServerConfigEntry);
+extern struct TMBServerConfHead mbServerConfHead;
 
-SLIST_HEAD(TMBMasterConfHead, TMBMasterConfigEntry);
-extern struct TMBMasterConfHead mbMasterConfHead;
+SLIST_HEAD(TMBClientConfHead, TMBClientConfigEntry);
+extern struct TMBClientConfHead mbClientConfHead;

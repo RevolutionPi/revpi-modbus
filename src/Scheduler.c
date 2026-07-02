@@ -1,13 +1,13 @@
 /*
- * SPDX-FileCopyrightText: 2023 KUNBUS GmbH
+ * SPDX-FileCopyrightText: 2023-2026 KUNBUS GmbH
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
 /*!
  *
- * Project: piModbusSlave
- * (C)    : KUNBUS GmbH, Heerweg 15C, 73370 Denkendorf, Germany
+ * Project: piModbusServer
+ * (C)    : KUNBUS GmbH, Magirusstraße 7, 73760 Ostfildern, Germany
  *
  */
 
@@ -92,7 +92,7 @@ int32_t initScheduler(struct TMBActionListHead tModbusActionListHead_p, struct s
     TAILQ_FOREACH(pEvent, pEventListHead_p, events)
     {
         syslog(LOG_INFO, "Modbus action list entry: %d, %d, %d, %d.%06ds, %d, %d, %d\n",
-            pEvent->ptModbusAction->i8uSlaveAddress,
+            pEvent->ptModbusAction->i8uServerAddress,
             pEvent->ptModbusAction->eFunctionCode,
             pEvent->ptModbusAction->i32uStartRegister,
             (int)(pEvent->triggerTime.tv_sec),
@@ -270,7 +270,7 @@ void determineNextEvent(tModbusEvent* next_modbus_event_p, struct suEventListHea
     TAILQ_FOREACH(pEvent, pEventListHead_p, events)
     {
         syslog(LOG_INFO, "Modbus next actions list entry: %d, %d, %d, %d s, %d msec, %d, %d, \n",
-            pEvent->ptModbusAction->i8uSlaveAddress,
+            pEvent->ptModbusAction->i8uServerAddress,
             pEvent->ptModbusAction->eFunctionCode,
             pEvent->ptModbusAction->i32uStartRegister,
             //pEvent->ptModbusAction->i8uCountRegister,
@@ -356,7 +356,7 @@ void get_minimal_modbus_action_interval(struct timespec* min_interval_p, struct 
  *
  *  the minimal event time offset between two modbus actions should ensure
  *	the processing of the event list and should provide enough delay between
- *	the modbus commands to prevent overloading of slow modbus slaves
+ *	the modbus commands to prevent overloading of slow modbus servers
  */
 /*****************************************************************************/
 void get_minimal_modbus_event_offset(struct timespec* min_event_offset_p, struct suEventListHead *pEventListHead_p)

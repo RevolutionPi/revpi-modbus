@@ -1,14 +1,14 @@
-# SPDX-FileCopyrightText: 2024 KUNBUS GmbH
+# SPDX-FileCopyrightText: 2024-2026 KUNBUS GmbH
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 [Unit]
-Description=Revolution Pi Modbus master
+Description=Revolution Pi Modbus Server
 Documentation=https://revolutionpi.com
 After=network.target systemd-modules-load.service
 
 [Service]
-ExecStart=/usr/sbin/piModbusMaster
+ExecStart=/usr/sbin/piModbusServer
 StandardOutput=journal
 StandardError=journal
 Restart=on-failure
@@ -28,6 +28,10 @@ InaccessiblePaths=/boot /home /root
 # Allow realtime scheduling
 LimitRTPRIO=99
 LimitRTTIME=infinity
+
+# Allow bind to ports < 1024
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 
 [Install]
 WantedBy=multi-user.target

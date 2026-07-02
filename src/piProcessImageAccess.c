@@ -1,18 +1,18 @@
 /*
- * SPDX-FileCopyrightText: 2023 KUNBUS GmbH
+ * SPDX-FileCopyrightText: 2023-2026 KUNBUS GmbH
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
 /*!
  *
- * Project: piModbusSlave
- * (C)    : KUNBUS GmbH, Heerweg 15C, 73370 Denkendorf, Germany
+ * Project: piModbusServer
+ * (C)    : KUNBUS GmbH, Magirusstraße 7, 73760 Ostfildern, Germany
  *
  */
 #include <stdio.h>
 #include "piProcessImageAccess.h"
-#include <piTest/piControlIf.h>
+#include <piControlIf.h>
 #include <syslog.h>
 
 
@@ -20,7 +20,7 @@
 /** @ brief write the current modbus data for device to pi process image
  *  
  *	@param[in]	mbMapping the libmodbus mapping object with current modbus data
- *	@param[in] ptrSPiProcessImageOffsets modbus slave parameter for the pi process image 
+ *	@param[in] ptrSPiProcessImageOffsets modbus server parameter for the pi process image 
  *
  *	@return '0' if processing was successful, otherwise a negative value
  *
@@ -64,7 +64,7 @@ int32_t writeModbusDataToProcessImage(modbus_mapping_t* mbMapping, TProcessImage
 /** @ brief update the current modbus output data from device to pi process image
  *  
  *	@param[in]	mbMapping the libmodbus mapping object with current modbus data
- *	@param[in]	ptrSPiProcessImageOffsets modbus slave parameter for the pi process image 
+ *	@param[in]	ptrSPiProcessImageOffsets modbus server parameter for the pi process image 
  *
  *	@return '0' if processing was successful, otherwise a negative value
  *

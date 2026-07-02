@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 #
-# Copyright 2023 KUNBUS GmbH
+# SPDX-FileCopyrightText: 2023-2026 KUNBUS GmbH
 #
 
 cmake_minimum_required(VERSION 3.7)

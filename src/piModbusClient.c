@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
 /*
- * Copyright 2023 KUNBUS GmbH
+ * SPDX-FileCopyrightText: 2023-2026 KUNBUS GmbH
  */
 
 #include <stdio.h>
@@ -18,9 +18,9 @@
 #include "project.h"
 #include "modbusconfig.h"
 
-#include "ModbusMasterThread.h"
+#include "ModbusClientThread.h"
 #include "piConfigParser/piConfigParser.h"
-#include <piTest/piControlIf.h>
+#include <piControlIf.h>
 
 #define DEBUG_MODE
 
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 {
     int i, modbusDevicesCount;
     pthread_t *pThreads = NULL;
-    struct TMBMasterConfigEntry *mbMasterConfigListEntry;
+    struct TMBClientConfigEntry *mbClientConfigListEntry;
 
     (void)argc;
     (void)argv;
@@ -38,26 +38,26 @@ int main(int argc, char *argv[])
     STDERR = stdout;    // show all messages on stdout
 
     //open syslog
-    openlog("piModbusMaster", LOG_PID, LOG_DAEMON);
-    syslog(LOG_NOTICE, "piModbusMaster started\n");
+    openlog("piModbusClient", LOG_PID, LOG_DAEMON);
+    syslog(LOG_NOTICE, "piModbusClient started\n");
     
     while (1) {
-        //create list for all modbus master configurations stored in pictory config file
-        SLIST_INIT(&mbMasterConfHead);
+        //create list for all modbus client configurations stored in pictory config file
+        SLIST_INIT(&mbClientConfHead);
     
         //parse config data
-        get_master_device_config_list(&mbMasterConfHead);
+        get_client_device_config_list(&mbClientConfHead);
     
-        if (SLIST_EMPTY(&mbMasterConfHead))
+        if (SLIST_EMPTY(&mbClientConfHead))
         {
-            syslog(LOG_ERR, "No modbus master configuration found in config file");
+            syslog(LOG_ERR, "No modbus client configuration found in config file");
             modbusDevicesCount = 0;
         }
         else
         {
             modbusDevicesCount = 0;
             //count number of matching devices to allocate memory for pthreads
-            SLIST_FOREACH(mbMasterConfigListEntry, &mbMasterConfHead, entries)
+            SLIST_FOREACH(mbClientConfigListEntry, &mbClientConfHead, entries)
             {
                 modbusDevicesCount++;
             }
@@ -65,26 +65,26 @@ int main(int argc, char *argv[])
         
             //start a thread for every matching configuration found in pictory config file
             i = 0;
-            SLIST_FOREACH(mbMasterConfigListEntry, &mbMasterConfHead, entries)
+            SLIST_FOREACH(mbClientConfigListEntry, &mbClientConfHead, entries)
             {
                 pThreads[i] = 0;
-                if (mbMasterConfigListEntry->mbMasterConfig.tModbusDeviceConfig.eProtocol == eProtRTU)
+                if (mbClientConfigListEntry->mbClientConfig.tModbusDeviceConfig.eProtocol == eProtRTU)
                 {
-                    if (0 != pthread_create(&pThreads[i], NULL, &startRtuMasterThread, (void*)&(mbMasterConfigListEntry->mbMasterConfig)))
+                    if (0 != pthread_create(&pThreads[i], NULL, &startRtuClientThread, (void*)&(mbClientConfigListEntry->mbClientConfig)))
                     {
                         syslog(LOG_ERR,
-                            "Cannot create modbus master thread for device %s\n",
-                            mbMasterConfigListEntry->mbMasterConfig.tModbusDeviceConfig.uProt.tRtuConfig.sz8DeviceFilePath);
+                            "Cannot create modbus client thread for device %s\n",
+                            mbClientConfigListEntry->mbClientConfig.tModbusDeviceConfig.uProt.tRtuConfig.sz8DeviceFilePath);
                     }
                 }
-                else if (mbMasterConfigListEntry->mbMasterConfig.tModbusDeviceConfig.eProtocol == eProtTCP)
+                else if (mbClientConfigListEntry->mbClientConfig.tModbusDeviceConfig.eProtocol == eProtTCP)
                 {
-                    if (0 != pthread_create(&pThreads[i], NULL, &startTcpMasterThread, (void*)&(mbMasterConfigListEntry->mbMasterConfig)))
+                    if (0 != pthread_create(&pThreads[i], NULL, &startTcpClientThread, (void*)&(mbClientConfigListEntry->mbClientConfig)))
                     {
                         syslog(LOG_ERR,
-                            "Cannot create modbus master thread for IP %s and Port %d\n",
-                            mbMasterConfigListEntry->mbMasterConfig.tModbusDeviceConfig.uProt.tTcpConfig.szTcpIpAddress,
-                            mbMasterConfigListEntry->mbMasterConfig.tModbusDeviceConfig.uProt.tTcpConfig.i32uPort);
+                            "Cannot create modbus client thread for IP %s and Port %d\n",
+                            mbClientConfigListEntry->mbClientConfig.tModbusDeviceConfig.uProt.tTcpConfig.szTcpIpAddress,
+                            mbClientConfigListEntry->mbClientConfig.tModbusDeviceConfig.uProt.tTcpConfig.i32uPort);
                     }
                 }
                 else
@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
             }
             free(pThreads);
 
-            free_modbus_master_config_data(&mbMasterConfHead);
+            free_modbus_client_config_data(&mbClientConfHead);
         }
         free_config_buffer();
     } while (1);

@@ -1,13 +1,13 @@
 /*
- * SPDX-FileCopyrightText: 2024 KUNBUS GmbH
+ * SPDX-FileCopyrightText: 2026 KUNBUS GmbH
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
 /*!
  *
- * Project: piModbusSlave
- * (C)    : KUNBUS GmbH, Heerweg 15C, 73370 Denkendorf, Germany
+ * Project: piModbusServer
+ * (C)    : KUNBUS GmbH, Magirusstraße 7, 73760 Ostfildern, Germany
  *
  */
 
@@ -23,8 +23,7 @@
 #include <sys/types.h>
 #include <regex.h>
 
-#include <piControl.h>
-#include <piTest/piControlIf.h>
+#include <piControlIf.h>
 
 
 typedef enum
@@ -78,11 +77,11 @@ typedef enum
 
 
 parsing_error get_json_devices_array(const char* pc8_pi_config_data_p, struct array_list **pp_devices_array_p);
-parsing_error parse_modbus_slaves_config_data(const char* pc8_pi_config_data_p, struct TMBSlaveConfHead *p_mbSlaveConfHead_p);
-parsing_error parse_modbus_master_config_data(const char* pc8_pi_config_data_p, struct TMBMasterConfHead *p_mbMasterConfHead_p);
+parsing_error parse_modbus_servers_config_data(const char* pc8_pi_config_data_p, struct TMBServerConfHead *p_mbServerConfHead_p);
+parsing_error parse_modbus_client_config_data(const char* pc8_pi_config_data_p, struct TMBClientConfHead *p_mbClientConfHead_p);
 parsing_error parse_device_modbus_configuration(json_object *json_device_parameter_object_p, TModbusDeviceConfiguration* modbusDeviceConfig_p);
-parsing_error parse_modbus_master_action_list(json_object *json_pi_device_p, struct TMBActionListHead *tModbusActionListHead_p);
-parsing_error parse_modbus_slave_device_process_image_config(json_object *pi_device_p, TModbusSlaveConfiguration* modbusSlaveConfiguration_p);
+parsing_error parse_modbus_client_action_list(json_object *json_pi_device_p, struct TMBActionListHead *tModbusActionListHead_p);
+parsing_error parse_modbus_server_device_process_image_config(json_object *pi_device_p, TModbusServerConfiguration* modbusServerConfiguration_p);
 parsing_error get_device_product_type(json_object *pi_device, const char **ppc8_productType);
 parsing_error get_variable_parameters(json_object *json_pi_device_p,
                                       const char* json_parameter_name,
@@ -104,25 +103,25 @@ const char* get_modbus_action_matching_name_string_value(
     const char* action_parameter_prefix_p,
     const char* action_identifier_p);
 
-const char MODBUS_MASTER_ACTION_ID_KEY[]                        = "ActionId";
-const char MODBUS_MASTER_SLAVE_ADDRESS_KEY[]                    = "SlaveAddress";
-const char MODBUS_MASTER_FUNCTON_CODE_KEY[]	                    = "FunctionCode";
-const char MODBUS_MASTER_REGISTER_ADDRESS_KEY[]	                = "RegisterAddress";
-const char MODBUS_MASTER_QUANTITY_OF_REGISTERS_KEY[]            = "QuantityOfRegisters";
-const char MODBUS_MASTER_ACTION_INTERVAL_KEY[]                  = "ActionInterval";
-const char MODBUS_MASTER_PROCESS_IMAGE_VARIABLE_NAME_KEY[]      = "DeviceValue";
-const char MODBUS_MASTER_ACTION_STATUS_BYTE[]                   = "ModbusActionStatus";
-const char MODBUS_MASTER_ACTION_STATUS_RESET[]                  = "ActionStatusReset";
+const char MODBUS_CLIENT_ACTION_ID_KEY[]                        = "ActionId";
+const char MODBUS_CLIENT_SERVER_ADDRESS_KEY[]                    = "ServerAddress";
+const char MODBUS_CLIENT_FUNCTON_CODE_KEY[]	                    = "FunctionCode";
+const char MODBUS_CLIENT_REGISTER_ADDRESS_KEY[]	                = "RegisterAddress";
+const char MODBUS_CLIENT_QUANTITY_OF_REGISTERS_KEY[]            = "QuantityOfRegisters";
+const char MODBUS_CLIENT_ACTION_INTERVAL_KEY[]                  = "ActionInterval";
+const char MODBUS_CLIENT_PROCESS_IMAGE_VARIABLE_NAME_KEY[]      = "DeviceValue";
+const char MODBUS_CLIENT_ACTION_STATUS_BYTE[]                   = "ModbusActionStatus";
+const char MODBUS_CLIENT_ACTION_STATUS_RESET[]                  = "ActionStatusReset";
 
-const char MODBUS_MASTER_MASTER_STATUS_BYTE[]                   = "ModbusMasterStatus";
-//const char MODBUS_MASTER_MASTER_STATUS_BYTE_VAR_NAME[]          = "Modbus_Master_Status";
-const char MODBUS_MASTER_MASTER_STATUS_RESET_BYTE[]             = "MasterStatusReset";
-//const char MODBUS_MASTER_MASTER_STATUS_RESET_BYTE_VAR_NAME[]    = "Master_Status_Reset";
+const char MODBUS_CLIENT_CLIENT_STATUS_BYTE[]                   = "ModbusClientStatus";
+//const char MODBUS_CLIENT_CLIENT_STATUS_BYTE_VAR_NAME[]          = "Modbus_Client_Status";
+const char MODBUS_CLIENT_CLIENT_STATUS_RESET_BYTE[]             = "ClientStatusReset";
+//const char MODBUS_CLIENT_CLIENT_STATUS_RESET_BYTE_VAR_NAME[]    = "Client_Status_Reset";
 
-const int MODBUS_MASTER_MASTER_STATUS_BYTE_OFFSET               = 100;
-const int MODBUS_MASTER_MASTER_STATUS_RESET_BYTE_OFFSET         = 173;
+const int MODBUS_CLIENT_CLIENT_STATUS_BYTE_OFFSET               = 100;
+const int MODBUS_CLIENT_CLIENT_STATUS_RESET_BYTE_OFFSET         = 173;
 
-TModbusSlaveConfiguration *tModbusSlaveConfig;
+TModbusServerConfiguration *tModbusServerConfig;
 static char *c8PiConfigData_g = NULL;
 
 
@@ -249,19 +248,19 @@ static void print_err(parsing_error error_code)
 
 /******************************************************************************/
 /** @ brief creates a list of all matching devices
- *          (modbus tcp slave or modbus rtu slave)
+ *          (modbus tcp server or modbus rtu server)
  *
- *	@param[out] *p_mbSlaveConfHead_p pointer to the list head
+ *	@param[out] *p_mbServerConfHead_p pointer to the list head
  *
  *	@return void
  */
 /*****************************************************************************/
-void get_slave_device_config_list(struct TMBSlaveConfHead *p_mbSlaveConfHead_p)
+void get_server_device_config_list(struct TMBServerConfHead *p_mbServerConfHead_p)
 {
     c8PiConfigData_g = read_config_file();
     if (c8PiConfigData_g != NULL)
     {
-        int32_t success = parse_modbus_slaves_config_data(c8PiConfigData_g, p_mbSlaveConfHead_p);
+        int32_t success = parse_modbus_servers_config_data(c8PiConfigData_g, p_mbServerConfHead_p);
         if(success < 0)
         {
             print_err(success);
@@ -272,19 +271,19 @@ void get_slave_device_config_list(struct TMBSlaveConfHead *p_mbSlaveConfHead_p)
 
 /******************************************************************************/
 /** @ brief creates a list of all matching devices
- *          (modbus tcp master or modbus rtu master)
+ *          (modbus tcp client or modbus rtu client)
  *
- *	@param[out] *p_mbSlaveConfHead_p pointer to the list head
+ *	@param[out] *p_mbServerConfHead_p pointer to the list head
  *
  *	@return void
  */
 /*****************************************************************************/
-void get_master_device_config_list(struct TMBMasterConfHead *p_mbMasterConfHead_p)
+void get_client_device_config_list(struct TMBClientConfHead *p_mbClientConfHead_p)
 {
     c8PiConfigData_g = read_config_file();
     if (c8PiConfigData_g != NULL)
     {
-        int32_t success = parse_modbus_master_config_data(c8PiConfigData_g, p_mbMasterConfHead_p);
+        int32_t success = parse_modbus_client_config_data(c8PiConfigData_g, p_mbClientConfHead_p);
         if (success < 0)
         {
             print_err(success);
@@ -319,11 +318,6 @@ char* read_config_file(void)
     FILE *config_file = NULL;
 
     config_file = fopen(PICONFIG_FILE, "r");
-    if (config_file == NULL)
-    {
-        // try old filename/location
-        config_file = fopen(PICONFIG_FILE_WHEEZY, "r");
-    }
 
     if (config_file != NULL)
     {
@@ -371,14 +365,14 @@ char* read_config_file(void)
  *
  *	@param[in]  pi_device_p pointer to json object which contains
  *              the device configuration
- *	@param[out] modbusSlaveConfiguration_p pointer to data structure
+ *	@param[out] modbusServerConfiguration_p pointer to data structure
  *              which stores the modbus device config data
  *
  *	@return '0' if processing was successful, otherwise a negative value
  */
 /************************************************************************/
-parsing_error parse_modbus_slave_device_process_image_config(json_object *pi_device_p,
-    TModbusSlaveConfiguration* modbusSlaveConfiguration_p)
+parsing_error parse_modbus_server_device_process_image_config(json_object *pi_device_p,
+    TModbusServerConfiguration* modbusServerConfiguration_p)
 {
     int32_t processImageDeviceOffset = -1;
 
@@ -410,9 +404,9 @@ parsing_error parse_modbus_slave_device_process_image_config(json_object *pi_dev
         print_err(successful);
     }
     assert((u32_process_image_input_size % 2) == 0);	//for word size holding and input registers
-    modbusSlaveConfiguration_p->tProcessImageConfig.u32HoldingRegistersLength = u32_process_image_input_size;
-    modbusSlaveConfiguration_p->tProcessImageConfig.u32HoldingRegistersInputOffset = u32_process_image_input_start_address + processImageDeviceOffset;
-    modbusSlaveConfiguration_p->tModbusDataConfig.u16HoldingRegisters = u32_process_image_input_size / 2;
+    modbusServerConfiguration_p->tProcessImageConfig.u32HoldingRegistersLength = u32_process_image_input_size;
+    modbusServerConfiguration_p->tProcessImageConfig.u32HoldingRegistersInputOffset = u32_process_image_input_start_address + processImageDeviceOffset;
+    modbusServerConfiguration_p->tModbusDataConfig.u16HoldingRegisters = u32_process_image_input_size / 2;
 
     //process image output input registers data config
     json_object *json_process_image_output_params = NULL;
@@ -429,9 +423,9 @@ parsing_error parse_modbus_slave_device_process_image_config(json_object *pi_dev
         print_err(successful);
     }
     assert((u32_process_image_output_size % 2) == 0);	//for word size holding and input registers
-    modbusSlaveConfiguration_p->tProcessImageConfig.u32InputRegistersLength = u32_process_image_output_size;
-    modbusSlaveConfiguration_p->tProcessImageConfig.u32InputRegistersOffset = u32_process_image_output_start_address + processImageDeviceOffset;
-    modbusSlaveConfiguration_p->tModbusDataConfig.u16InputRegisters = u32_process_image_output_size / 2;
+    modbusServerConfiguration_p->tProcessImageConfig.u32InputRegistersLength = u32_process_image_output_size;
+    modbusServerConfiguration_p->tProcessImageConfig.u32InputRegistersOffset = u32_process_image_output_start_address + processImageDeviceOffset;
+    modbusServerConfiguration_p->tModbusDataConfig.u16InputRegisters = u32_process_image_output_size / 2;
 
     //config coils
     //config discrete inputs
@@ -503,16 +497,16 @@ parsing_error get_device_product_type(json_object *pi_device, const char **ppc8_
 
 
 /*****************************************************************************/
-/** @ brief parse the json config.rsc data for virtual device modbus masters
+/** @ brief parse the json config.rsc data for virtual device modbus clients
  *
  *	@param[in] pc8_pi_config_data_p pointer to config.rsc data
- *	@param[out] p_mbMasterConfHead_p head to master config list
+ *	@param[out] p_mbClientConfHead_p head to client config list
  *
  *	@return '0' if processing was successful, otherwise a negative value
  *
  */
 /*****************************************************************************/
-parsing_error parse_modbus_master_config_data(const char* pc8_pi_config_data_p, struct TMBMasterConfHead *p_mbMasterConfHead_p)
+parsing_error parse_modbus_client_config_data(const char* pc8_pi_config_data_p, struct TMBClientConfHead *p_mbClientConfHead_p)
 {
     struct array_list *devices_array = NULL;
     int32_t success = get_json_devices_array(pc8_pi_config_data_p, &devices_array);
@@ -534,17 +528,17 @@ parsing_error parse_modbus_master_config_data(const char* pc8_pi_config_data_p, 
             return success;
         }
 
-        if ((memcmp(productType, MODBUS_MASTER_TCP_PI_PRODUCT_TYPE, strlen(productType)) == 0) ||
-                (memcmp(productType, MODBUS_MASTER_RTU_PI_PRODUCT_TYPE, strlen(productType)) == 0))
+        if ((memcmp(productType, MODBUS_CLIENT_TCP_PI_PRODUCT_TYPE, strlen(productType)) == 0) ||
+                (memcmp(productType, MODBUS_CLIENT_RTU_PI_PRODUCT_TYPE, strlen(productType)) == 0))
         {
             //parse this device
-            struct TMBMasterConfigEntry *nextConfig = calloc(1, sizeof(struct TMBMasterConfigEntry));
+            struct TMBClientConfigEntry *nextConfig = calloc(1, sizeof(struct TMBClientConfigEntry));
             if (nextConfig == NULL)
             {
                 syslog(LOG_ERR, "parsing modbus configuration failed. Memory allocation failed.\n");
                 continue;
             }
-            success = parse_device_modbus_configuration(json_pi_device, &(nextConfig->mbMasterConfig.tModbusDeviceConfig));
+            success = parse_device_modbus_configuration(json_pi_device, &(nextConfig->mbClientConfig.tModbusDeviceConfig));
             if (success < 0)
             {
                 print_err(success);
@@ -552,10 +546,10 @@ parsing_error parse_modbus_master_config_data(const char* pc8_pi_config_data_p, 
                 continue;
             }
 
-            nextConfig->mbMasterConfig.i32ActionCount = parse_modbus_master_action_list(json_pi_device, &(nextConfig->mbMasterConfig.mbActionListHead));
-            if(nextConfig->mbMasterConfig.i32ActionCount < 0)
+            nextConfig->mbClientConfig.i32ActionCount = parse_modbus_client_action_list(json_pi_device, &(nextConfig->mbClientConfig.mbActionListHead));
+            if(nextConfig->mbClientConfig.i32ActionCount < 0)
             {
-                print_err(nextConfig->mbMasterConfig.i32ActionCount);
+                print_err(nextConfig->mbClientConfig.i32ActionCount);
                 free(nextConfig);
                 continue;
             }
@@ -563,14 +557,14 @@ parsing_error parse_modbus_master_config_data(const char* pc8_pi_config_data_p, 
             //search for device status byte offset in inp and out list of device
             //get status byte variable name
             json_object *json_config_extend = NULL;
-            json_object *json_modbus_master_status = NULL;
+            json_object *json_modbus_client_status = NULL;
             struct json_object_iter iter;
 
             if (!(json_object_object_get_ex(json_pi_device, "extend", &json_config_extend)))
             {
                 return EXTEND_SECTION_NOT_FOUND;
             }
-            if (!(json_object_object_get_ex(json_config_extend, "deviceMisc", &json_modbus_master_status)))
+            if (!(json_object_object_get_ex(json_config_extend, "deviceMisc", &json_modbus_client_status)))
             {
                 return DEVICE_RESET_ENTRIES_NOT_FOUND;
             }
@@ -578,29 +572,29 @@ parsing_error parse_modbus_master_config_data(const char* pc8_pi_config_data_p, 
             uint32_t byte_offset = 0;
             uint32_t bit_offset = 0;
 
-            json_object_object_foreachC(json_modbus_master_status, iter)
+            json_object_object_foreachC(json_modbus_client_status, iter)
             {
-                //find the modbus Master status field whos name starts with 'ModbusMasterStatus'
-                if(memcmp(MODBUS_MASTER_MASTER_STATUS_BYTE, iter.key, (sizeof(MODBUS_MASTER_MASTER_STATUS_BYTE) / sizeof(char))-1) == 0)
+                //find the modbus Client status field whos name starts with 'ModbusClientStatus'
+                if(memcmp(MODBUS_CLIENT_CLIENT_STATUS_BYTE, iter.key, (sizeof(MODBUS_CLIENT_CLIENT_STATUS_BYTE) / sizeof(char))-1) == 0)
                 {
                     int32_t success = get_variable_parameters(json_pi_device, json_object_get_string(iter.val), &byte_offset, &bit_offset);
                     //search for variable name in inp and out list of device
                     if(success == 0)
                     {
-                        nextConfig->mbMasterConfig.tModbusDeviceConfig.i32uDeviceStatusByteProcessImageOffset = byte_offset;
+                        nextConfig->mbClientConfig.tModbusDeviceConfig.i32uDeviceStatusByteProcessImageOffset = byte_offset;
                     }
                     else
                     {
                         print_err(success);
                     }
                 }
-                else if(memcmp(MODBUS_MASTER_MASTER_STATUS_RESET_BYTE, iter.key, (sizeof(MODBUS_MASTER_MASTER_STATUS_RESET_BYTE) / sizeof(char))-1) == 0)
+                else if(memcmp(MODBUS_CLIENT_CLIENT_STATUS_RESET_BYTE, iter.key, (sizeof(MODBUS_CLIENT_CLIENT_STATUS_RESET_BYTE) / sizeof(char))-1) == 0)
                 {
                     int32_t success = get_variable_parameters(json_pi_device, json_object_get_string(iter.val), &byte_offset, &bit_offset);
                     //search for variable name in inp and out list of device
                     if(success == 0)
                     {
-                        nextConfig->mbMasterConfig.tModbusDeviceConfig.i32uDeviceStatusResetByteProcessImageByteOffset = byte_offset;
+                        nextConfig->mbClientConfig.tModbusDeviceConfig.i32uDeviceStatusResetByteProcessImageByteOffset = byte_offset;
                     }
                     else
                     {
@@ -610,27 +604,27 @@ parsing_error parse_modbus_master_config_data(const char* pc8_pi_config_data_p, 
             }
 #else
             int32_t processImageDeviceOffset = get_process_image_device_offset(json_pi_device);
-            nextConfig->mbMasterConfig.tModbusDeviceConfig.i32uDeviceStatusByteProcessImageOffset = processImageDeviceOffset + MODBUS_MASTER_MASTER_STATUS_BYTE_OFFSET;
-            nextConfig->mbMasterConfig.tModbusDeviceConfig.i32uDeviceStatusResetByteProcessImageByteOffset = processImageDeviceOffset + MODBUS_MASTER_MASTER_STATUS_RESET_BYTE_OFFSET;
+            nextConfig->mbClientConfig.tModbusDeviceConfig.i32uDeviceStatusByteProcessImageOffset = processImageDeviceOffset + MODBUS_CLIENT_CLIENT_STATUS_BYTE_OFFSET;
+            nextConfig->mbClientConfig.tModbusDeviceConfig.i32uDeviceStatusResetByteProcessImageByteOffset = processImageDeviceOffset + MODBUS_CLIENT_CLIENT_STATUS_RESET_BYTE_OFFSET;
 #endif
-            //insert parsed config to master list
-            SLIST_INSERT_HEAD(p_mbMasterConfHead_p, nextConfig, entries);
+            //insert parsed config to client list
+            SLIST_INSERT_HEAD(p_mbClientConfHead_p, nextConfig, entries);
         }
     }
     return 0;
 }
 
 
-void free_modbus_master_config_data(struct TMBMasterConfHead *p_mbMasterConfHead_p)
+void free_modbus_client_config_data(struct TMBClientConfHead *p_mbClientConfHead_p)
 {
-    while (SLIST_FIRST(p_mbMasterConfHead_p))
+    while (SLIST_FIRST(p_mbClientConfHead_p))
     {
-        struct TMBMasterConfigEntry *entry = SLIST_FIRST(p_mbMasterConfHead_p);
-        SLIST_REMOVE_HEAD(p_mbMasterConfHead_p, entries);
-        while (!SLIST_EMPTY(&entry->mbMasterConfig.mbActionListHead))
+        struct TMBClientConfigEntry *entry = SLIST_FIRST(p_mbClientConfHead_p);
+        SLIST_REMOVE_HEAD(p_mbClientConfHead_p, entries);
+        while (!SLIST_EMPTY(&entry->mbClientConfig.mbActionListHead))
         {
-            struct TMBActionEntry *act = SLIST_FIRST(&entry->mbMasterConfig.mbActionListHead);
-            SLIST_REMOVE_HEAD(&entry->mbMasterConfig.mbActionListHead, entries);
+            struct TMBActionEntry *act = SLIST_FIRST(&entry->mbClientConfig.mbActionListHead);
+            SLIST_REMOVE_HEAD(&entry->mbClientConfig.mbActionListHead, entries);
             free(act);
         }
         free(entry);
@@ -639,16 +633,16 @@ void free_modbus_master_config_data(struct TMBMasterConfHead *p_mbMasterConfHead
 
 
 /*****************************************************************************/
-/** @ brief parse the json config.rsc data for virtual device modbus slaves
+/** @ brief parse the json config.rsc data for virtual device modbus servers
  *
  *	@param[in] pc8_pi_config_data_p pointer to config data
- *	@param[out] p_mbSlaveConfHead_p header to linked list for parsed device config data
+ *	@param[out] p_mbServerConfHead_p header to linked list for parsed device config data
  *
  *	@return '0' if processing was successful, otherwise a negative value
  *
  */
 /*****************************************************************************/
-parsing_error parse_modbus_slaves_config_data(const char* pc8_pi_config_data_p, struct TMBSlaveConfHead *p_mbSlaveConfHead_p)
+parsing_error parse_modbus_servers_config_data(const char* pc8_pi_config_data_p, struct TMBServerConfHead *p_mbServerConfHead_p)
 {
     struct array_list *devices_array = NULL;
     int32_t success = get_json_devices_array(pc8_pi_config_data_p, &devices_array);
@@ -669,18 +663,18 @@ parsing_error parse_modbus_slaves_config_data(const char* pc8_pi_config_data_p, 
             return success;
         }
 
-        if ((memcmp(productType, MODBUS_SLAVE_TCP_PI_PRODUCT_TYPE, strlen(productType)) == 0) ||
-                (memcmp(productType, MODBUS_SLAVE_RTU_PI_PRODUCT_TYPE, strlen(productType)) == 0))
+        if ((memcmp(productType, MODBUS_SERVER_TCP_PI_PRODUCT_TYPE, strlen(productType)) == 0) ||
+                (memcmp(productType, MODBUS_SERVER_RTU_PI_PRODUCT_TYPE, strlen(productType)) == 0))
         {
             //parse this device
-            struct TMBSlaveConfigEntry *nextConfig = calloc(1, sizeof(struct TMBSlaveConfigEntry));
+            struct TMBServerConfigEntry *nextConfig = calloc(1, sizeof(struct TMBServerConfigEntry));
             if (nextConfig == NULL)
             {
                 syslog(LOG_ERR, "parsing modbus configuration failed. Memory allocation failed.\n");
                 continue;
             }
 
-            int32_t success = parse_device_modbus_configuration(pi_device, &(nextConfig->mbSlaveConfig.tModbusDeviceConfig));
+            int32_t success = parse_device_modbus_configuration(pi_device, &(nextConfig->mbServerConfig.tModbusDeviceConfig));
             if (success < 0)
             {
                 print_err(success);
@@ -688,14 +682,14 @@ parsing_error parse_modbus_slaves_config_data(const char* pc8_pi_config_data_p, 
                 continue;
             }
 
-            success = parse_modbus_slave_device_process_image_config(pi_device, &(nextConfig->mbSlaveConfig));
+            success = parse_modbus_server_device_process_image_config(pi_device, &(nextConfig->mbServerConfig));
             if (success < 0)
             {
                 print_err(success);
                 free(nextConfig);
                 continue;
             }
-            SLIST_INSERT_HEAD(p_mbSlaveConfHead_p, nextConfig, entries);
+            SLIST_INSERT_HEAD(p_mbServerConfHead_p, nextConfig, entries);
         }
     }
     return 0;
@@ -835,7 +829,7 @@ const char* get_device_string_parameter(json_object *json_device_config_paramete
         return ret_val;
     }
 
-    array_entry = (json_object*)(array_list_get_idx(config_parameter, MODBUS_SLAVE_PARAMETER_ARRAY_POSITION));
+    array_entry = (json_object*)(array_list_get_idx(config_parameter, MODBUS_SERVER_PARAMETER_ARRAY_POSITION));
     if (json_object_get_type(array_entry) != json_type_string)
     {
         syslog(LOG_ERR, "parsing config failed, wrong parameter type\n");
@@ -878,14 +872,14 @@ parsing_error parse_device_modbus_configuration(json_object *json_device_object_
         return INTERFACE_SECTION_NOT_FOUND;
     }
     //modbus tcp
-    if (memcmp(productType, MODBUS_MASTER_TCP_PI_PRODUCT_TYPE, strlen(productType)) == 0)
+    if (memcmp(productType, MODBUS_CLIENT_TCP_PI_PRODUCT_TYPE, strlen(productType)) == 0)
     {
         //set TCP in configuration
         modbusDeviceConfig_p->eProtocol = eProtTCP;
         const char *array_content_string = NULL;
 
         //set ip address
-        array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_MASTER_TCP_JSON_KEY_IP_ADDRESS);
+        array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_CLIENT_TCP_JSON_KEY_IP_ADDRESS);
         if (array_content_string == NULL)
         {
             return TCP_ADDRESS_NOT_FOUND;
@@ -897,7 +891,7 @@ parsing_error parse_device_modbus_configuration(json_object *json_device_object_
         strcpy(modbusDeviceConfig_p->uProt.tTcpConfig.szTcpIpAddress, array_content_string);
 
         //set TCP port
-        array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_MASTER_TCP_JSON_KEY_TCP_PORT);
+        array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_CLIENT_TCP_JSON_KEY_TCP_PORT);
         if (array_content_string == NULL)
         {
             return TCP_PORT_NOT_FOUND;
@@ -912,7 +906,7 @@ parsing_error parse_device_modbus_configuration(json_object *json_device_object_
         }
         modbusDeviceConfig_p->uProt.tTcpConfig.i32uPort = tcp_port;
     }
-    else if ((memcmp(productType, MODBUS_SLAVE_TCP_PI_PRODUCT_TYPE, strlen(productType)) == 0))
+    else if ((memcmp(productType, MODBUS_SERVER_TCP_PI_PRODUCT_TYPE, strlen(productType)) == 0))
     {
         //set TCP in configuration
         modbusDeviceConfig_p->eProtocol = eProtTCP;
@@ -922,7 +916,7 @@ parsing_error parse_device_modbus_configuration(json_object *json_device_object_
         strcpy(modbusDeviceConfig_p->uProt.tTcpConfig.szTcpIpAddress, "0.0.0.0");
 
         //set TCP port
-        array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_SLAVE_TCP_JSON_KEY_TCP_PORT);
+        array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_SERVER_TCP_JSON_KEY_TCP_PORT);
         if (array_content_string == NULL)
         {
             return TCP_PORT_NOT_FOUND;
@@ -937,10 +931,10 @@ parsing_error parse_device_modbus_configuration(json_object *json_device_object_
         }
         modbusDeviceConfig_p->uProt.tTcpConfig.i32uPort = tcp_port;
 
-        if (memcmp(productType, MODBUS_SLAVE_TCP_PI_PRODUCT_TYPE, strlen(productType)) == 0)
+        if (memcmp(productType, MODBUS_SERVER_TCP_PI_PRODUCT_TYPE, strlen(productType)) == 0)
         {
             //set max modbus/tcp connections
-            array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_SLAVE_TCP_JSON_KEY_TCP_MAX_CONNECTIONS);
+            array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_SERVER_TCP_JSON_KEY_TCP_MAX_CONNECTIONS);
             if (array_content_string == NULL)
             {
                 return MAX_CONNECTIONS_NOT_FOUND;
@@ -958,8 +952,8 @@ parsing_error parse_device_modbus_configuration(json_object *json_device_object_
 
     }
     //modbus rtu
-    else if ((memcmp(productType, MODBUS_SLAVE_RTU_PI_PRODUCT_TYPE, strlen(productType)) == 0)
-                    || (memcmp(productType, MODBUS_MASTER_RTU_PI_PRODUCT_TYPE, strlen(productType)) == 0))
+    else if ((memcmp(productType, MODBUS_SERVER_RTU_PI_PRODUCT_TYPE, strlen(productType)) == 0)
+                    || (memcmp(productType, MODBUS_CLIENT_RTU_PI_PRODUCT_TYPE, strlen(productType)) == 0))
     {
 
         //set RTU in configuration
@@ -967,7 +961,7 @@ parsing_error parse_device_modbus_configuration(json_object *json_device_object_
         const char* array_content_string = NULL;
 
         //set device path
-        array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_SLAVE_RTU_JSON_KEY_DEVICE_PATH);
+        array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_SERVER_RTU_JSON_KEY_DEVICE_PATH);
         if (array_content_string == NULL)
         {
             return RTU_DEVICE_PATH_NOT_FOUND;
@@ -979,7 +973,7 @@ parsing_error parse_device_modbus_configuration(json_object *json_device_object_
         strcpy(modbusDeviceConfig_p->uProt.tRtuConfig.sz8DeviceFilePath, array_content_string);
 
         //set serial baudrate
-        array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_SLAVE_RTU_JSON_KEY_BAUDRATE);
+        array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_SERVER_RTU_JSON_KEY_BAUDRATE);
         if (array_content_string == NULL)
         {
             return RTU_BAUDRATE_NOT_FOUND;
@@ -995,7 +989,7 @@ parsing_error parse_device_modbus_configuration(json_object *json_device_object_
         modbusDeviceConfig_p->uProt.tRtuConfig.i32uBaud = rtu_baudrate;
 
         //set parity for serial connection
-        array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_SLAVE_RTU_JSON_KEY_PARITY);
+        array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_SERVER_RTU_JSON_KEY_PARITY);
         if (array_content_string == NULL)
         {
             return RTU_PARITY_NOT_FOUND;
@@ -1004,15 +998,15 @@ parsing_error parse_device_modbus_configuration(json_object *json_device_object_
         {
             return RTU_PARITY_LENGTH_EXCEEDED;
         }
-        if (array_content_string[0] == MODBUS_SLAVE_RTU_JSON_PARITY_VALUE_EVEN)
+        if (array_content_string[0] == MODBUS_SERVER_RTU_JSON_PARITY_VALUE_EVEN)
         {
             modbusDeviceConfig_p->uProt.tRtuConfig.cParity = 'E';
         }
-        else if (array_content_string[0] == MODBUS_SLAVE_RTU_JSON_PARITY_VALUE_ODD)
+        else if (array_content_string[0] == MODBUS_SERVER_RTU_JSON_PARITY_VALUE_ODD)
         {
             modbusDeviceConfig_p->uProt.tRtuConfig.cParity = 'O';
         }
-        else if (array_content_string[0] == MODBUS_SLAVE_RTU_JSON_PARITY_VALUE_NONE)
+        else if (array_content_string[0] == MODBUS_SERVER_RTU_JSON_PARITY_VALUE_NONE)
         {
             modbusDeviceConfig_p->uProt.tRtuConfig.cParity = 'N';
         }
@@ -1022,7 +1016,7 @@ parsing_error parse_device_modbus_configuration(json_object *json_device_object_
         }
 
         //set number of databits for serial connection
-        array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_SLAVE_RTU_JSON_KEY_DATABITS);
+        array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_SERVER_RTU_JSON_KEY_DATABITS);
         if (array_content_string == NULL)
         {
             return RTU_DATABITS_NOT_FOUND;
@@ -1038,7 +1032,7 @@ parsing_error parse_device_modbus_configuration(json_object *json_device_object_
         modbusDeviceConfig_p->uProt.tRtuConfig.i8uDatabits = databits_count;
 
         //set number of stopbits for serial connection
-        array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_SLAVE_RTU_JSON_KEY_STOPBITS);
+        array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_SERVER_RTU_JSON_KEY_STOPBITS);
         if (array_content_string == NULL)
         {
             return RTU_STOPBITS_NOT_FOUND;
@@ -1053,10 +1047,10 @@ parsing_error parse_device_modbus_configuration(json_object *json_device_object_
         }
         modbusDeviceConfig_p->uProt.tRtuConfig.i8uStopbits = stopbits_count;
 
-        if (memcmp(productType, MODBUS_SLAVE_RTU_PI_PRODUCT_TYPE, strlen(productType)) == 0)
+        if (memcmp(productType, MODBUS_SERVER_RTU_PI_PRODUCT_TYPE, strlen(productType)) == 0)
         {
             //set modbus address
-            array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_SLAVE_RTU_MODBUS_ADDRESS);
+            array_content_string = get_device_string_parameter(json_modbus_config_parameters, MODBUS_SERVER_RTU_MODBUS_ADDRESS);
             if (array_content_string == NULL)
             {
                 return RTU_MODBUS_ADDRESS_NOT_FOUND;
@@ -1092,7 +1086,7 @@ parsing_error parse_device_modbus_configuration(json_object *json_device_object_
  *	@return 0 if successful, otherwise a negative value
  */
 /*****************************************************************************/
-parsing_error parse_modbus_master_action_list(json_object *json_pi_device_p, struct TMBActionListHead *tModbusActionListHead_p)
+parsing_error parse_modbus_client_action_list(json_object *json_pi_device_p, struct TMBActionListHead *tModbusActionListHead_p)
 {
     assert(json_pi_device_p != NULL);
     assert(tModbusActionListHead_p != NULL);
@@ -1125,7 +1119,7 @@ parsing_error parse_modbus_master_action_list(json_object *json_pi_device_p, str
     json_object_object_foreachC(json_modbus_actions, iter)
     {
         //find the modbus action parameters which names starts with 'ActionId'
-        if (memcmp(MODBUS_MASTER_ACTION_ID_KEY, iter.key, (sizeof(MODBUS_MASTER_ACTION_ID_KEY) / sizeof(char))-1) == 0)
+        if (memcmp(MODBUS_CLIENT_ACTION_ID_KEY, iter.key, (sizeof(MODBUS_CLIENT_ACTION_ID_KEY) / sizeof(char))-1) == 0)
         {
             //get the modbus action parameters identifier for this action id
             //which is identical for all modbus action parameters of this modbus action
@@ -1155,7 +1149,7 @@ parsing_error parse_modbus_master_action_list(json_object *json_pi_device_p, str
             //set actionId
             val_str_buffer = get_modbus_action_matching_name_string_value(
                     json_modbus_actions,
-                MODBUS_MASTER_ACTION_ID_KEY,
+                MODBUS_CLIENT_ACTION_ID_KEY,
                 action_parameters_identifier);
             if (val_str_buffer == NULL)
             {
@@ -1172,10 +1166,10 @@ parsing_error parse_modbus_master_action_list(json_object *json_pi_device_p, str
             assert((actionID > 0) && (actionID < INT32_MAX));  //check min 1, max INT32_MAX
             nextAction->modbusAction.i16uActionID = actionID;
 
-            //set slave address
+            //set server address
             val_str_buffer = get_modbus_action_matching_name_string_value(
                     json_modbus_actions,
-                MODBUS_MASTER_SLAVE_ADDRESS_KEY,
+                MODBUS_CLIENT_SERVER_ADDRESS_KEY,
                 action_parameters_identifier);
             if (val_str_buffer == NULL)
             {
@@ -1184,18 +1178,18 @@ parsing_error parse_modbus_master_action_list(json_object *json_pi_device_p, str
                 continue;
             }
             errno = 0;
-            uint32_t slave_address = strtoul(val_str_buffer, NULL, 10);
+            uint32_t server_address = strtoul(val_str_buffer, NULL, 10);
             if (errno != 0)
             {
                 return ACTION_ADDRESS_WRONG_FORMAT;
             }
-            //assert(slave_address < 248);     //see modbus station address specifications, '0' for broadcast
-            nextAction->modbusAction.i8uSlaveAddress = slave_address;
+            //assert(server_address < 248);     //see modbus station address specifications, '0' for broadcast
+            nextAction->modbusAction.i8uServerAddress = server_address;
 
             //set modbus function code
             val_str_buffer = get_modbus_action_matching_name_string_value(
                     json_modbus_actions,
-                MODBUS_MASTER_FUNCTON_CODE_KEY,
+                MODBUS_CLIENT_FUNCTON_CODE_KEY,
                 action_parameters_identifier);
             if (val_str_buffer == NULL)
             {
@@ -1215,7 +1209,7 @@ parsing_error parse_modbus_master_action_list(json_object *json_pi_device_p, str
             //set modbus register address
             val_str_buffer = get_modbus_action_matching_name_string_value(
                     json_modbus_actions,
-                MODBUS_MASTER_REGISTER_ADDRESS_KEY,
+                MODBUS_CLIENT_REGISTER_ADDRESS_KEY,
                 action_parameters_identifier);
             if (val_str_buffer == NULL)
             {
@@ -1235,7 +1229,7 @@ parsing_error parse_modbus_master_action_list(json_object *json_pi_device_p, str
             //set modbus register quantity
             val_str_buffer = get_modbus_action_matching_name_string_value(
                     json_modbus_actions,
-                MODBUS_MASTER_QUANTITY_OF_REGISTERS_KEY,
+                MODBUS_CLIENT_QUANTITY_OF_REGISTERS_KEY,
                 action_parameters_identifier);
             if (val_str_buffer == NULL)
             {
@@ -1264,7 +1258,7 @@ parsing_error parse_modbus_master_action_list(json_object *json_pi_device_p, str
             //set modbus command interval
             val_str_buffer = get_modbus_action_matching_name_string_value(
                     json_modbus_actions,
-                MODBUS_MASTER_ACTION_INTERVAL_KEY,
+                MODBUS_CLIENT_ACTION_INTERVAL_KEY,
                 action_parameters_identifier);
             if (val_str_buffer == NULL)
             {
@@ -1287,7 +1281,7 @@ parsing_error parse_modbus_master_action_list(json_object *json_pi_device_p, str
             //get modbus device value parameter (name of variable in pictory)
             val_str_buffer = get_modbus_action_matching_name_string_value(
                     json_modbus_actions,
-                MODBUS_MASTER_PROCESS_IMAGE_VARIABLE_NAME_KEY,
+                MODBUS_CLIENT_PROCESS_IMAGE_VARIABLE_NAME_KEY,
                 action_parameters_identifier);
             if (val_str_buffer == NULL)
             {
@@ -1319,7 +1313,7 @@ parsing_error parse_modbus_master_action_list(json_object *json_pi_device_p, str
             //get modbus action status offset
             val_str_buffer = get_modbus_action_matching_name_string_value(
                     json_modbus_actions,
-                MODBUS_MASTER_ACTION_STATUS_BYTE,
+                MODBUS_CLIENT_ACTION_STATUS_BYTE,
                 action_parameters_identifier);
             if (val_str_buffer == NULL)
             {
@@ -1341,7 +1335,7 @@ parsing_error parse_modbus_master_action_list(json_object *json_pi_device_p, str
             //get modbus action status reset offset
             val_str_buffer = get_modbus_action_matching_name_string_value(
                     json_modbus_actions,
-                MODBUS_MASTER_ACTION_STATUS_RESET,
+                MODBUS_CLIENT_ACTION_STATUS_RESET,
                 action_parameters_identifier);
             if (val_str_buffer == NULL)
             {

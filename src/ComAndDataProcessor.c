@@ -1,13 +1,13 @@
 /*
- * SPDX-FileCopyrightText: 2023 KUNBUS GmbH
+ * SPDX-FileCopyrightText: 2023-2026 KUNBUS GmbH
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
 /*!
  *
- * Project: piModbusSlave
- * (C)    : KUNBUS GmbH, Heerweg 15C, 73370 Denkendorf, Germany
+ * Project: piModbusServer
+ * (C)    : KUNBUS GmbH, Magirusstraße 7, 73760 Ostfildern, Germany
  *
  */
 
@@ -19,7 +19,7 @@
 #include "modbusconfig.h"
 #include <stdio.h>
 #include <errno.h>
-#include <piTest/piControlIf.h>
+#include <piControlIf.h>
 #include <sys/param.h>
 #include <assert.h>
 #include <syslog.h>
@@ -245,14 +245,14 @@ int32_t processModbusAction(modbus_t *pModbusContext, tModbusEvent* mb_event, ui
             }
         }   break;
             
-    case eREPORT_SLAVE_ID:
+    case eREPORT_SERVER_ID:
         {
             assert(mb_event->ptModbusAction->i16uRegisterCount <= MODBUS_MAX_PDU_LENGTH);
 	        
 #if LIBMODBUS_VERSION_CHECK(3,1,2)
 	        len = modbus_report_slave_id(pModbusContext, MAX_REGISTER_SIZE_PER_ACTION, (uint8_t*)buffer);
 #else	
-	        len = modbus_report_slave_id(pModbusContext, (uint8_t*)buffer);
+	        len = modbus_report_server_id(pModbusContext, (uint8_t*)buffer);
 #endif
 
             if (len < ((mb_event->ptModbusAction->i16uRegisterCount) ))
@@ -376,7 +376,7 @@ int32_t reset_modbus_action_status(uint32_t status_reset_byte_offset_p, uint8_t 
  *  
  */
 /************************************************************************/
-int32_t reset_modbus_master_status(uint32_t status_reset_byte_offset_p, uint32_t status_byte_offset_p)
+int32_t reset_modbus_client_status(uint32_t status_reset_byte_offset_p, uint32_t status_byte_offset_p)
 {
     return reset_modbus_action_status(status_reset_byte_offset_p, 0, status_byte_offset_p);
 }
