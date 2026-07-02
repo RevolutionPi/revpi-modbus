@@ -1,2 +1,2 @@
-usr/sbin/piModbusMaster
-usr/lib/systemd/system/pimodbus-master.service
+usr/sbin/piModbusClient
+usr/lib/systemd/system/pimodbus-client.service
