@@ -104,7 +104,7 @@ const char* get_modbus_action_matching_name_string_value(
     const char* action_identifier_p);
 
 const char MODBUS_CLIENT_ACTION_ID_KEY[]                        = "ActionId";
-const char MODBUS_CLIENT_SERVER_ADDRESS_KEY[]                    = "ServerAddress";
+const char MODBUS_CLIENT_SERVER_ADDRESS_KEY[]                   = "SlaveAddress"; // "SlaveAddress_01_ModbusRTUClient_20260619_1_0": "1"
 const char MODBUS_CLIENT_FUNCTON_CODE_KEY[]	                    = "FunctionCode";
 const char MODBUS_CLIENT_REGISTER_ADDRESS_KEY[]	                = "RegisterAddress";
 const char MODBUS_CLIENT_QUANTITY_OF_REGISTERS_KEY[]            = "QuantityOfRegisters";
