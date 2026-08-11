@@ -102,9 +102,22 @@ const char* get_modbus_action_matching_name_string_value(
     struct json_object *json_modbus_actions_p,
     const char* action_parameter_prefix_p,
     const char* action_identifier_p);
+const char* get_modbus_action_matching_name_string_value_compat(
+    struct json_object *json_modbus_actions_p,
+    const char* action_parameter_prefix_p,
+    const char* action_parameter_legacy_prefix_p,
+    const char* action_identifier_p);
+static int json_key_starts_with(const char* json_key_p, const char* prefix_p);
 
+/*  The json names (tags) below are part of the PiCtory device descriptions
+ *  (RAP files) and therefore are not ours to rename. PiCtory still uses the
+ *  historic master/slave wording for some of them, so every tag which was
+ *  renamed to the client/server wording is looked up with its legacy spelling
+ *  as well. This keeps the parser working with old and new PiCtory versions.
+ */
 const char MODBUS_CLIENT_ACTION_ID_KEY[]                        = "ActionId";
-const char MODBUS_CLIENT_SERVER_ADDRESS_KEY[]                    = "ServerAddress";
+const char MODBUS_CLIENT_SERVER_ADDRESS_KEY[]                   = "ServerAddress";
+const char MODBUS_CLIENT_SERVER_ADDRESS_KEY_LEGACY[]            = "SlaveAddress";
 const char MODBUS_CLIENT_FUNCTON_CODE_KEY[]	                    = "FunctionCode";
 const char MODBUS_CLIENT_REGISTER_ADDRESS_KEY[]	                = "RegisterAddress";
 const char MODBUS_CLIENT_QUANTITY_OF_REGISTERS_KEY[]            = "QuantityOfRegisters";
@@ -114,8 +127,10 @@ const char MODBUS_CLIENT_ACTION_STATUS_BYTE[]                   = "ModbusActionS
 const char MODBUS_CLIENT_ACTION_STATUS_RESET[]                  = "ActionStatusReset";
 
 const char MODBUS_CLIENT_CLIENT_STATUS_BYTE[]                   = "ModbusClientStatus";
+const char MODBUS_CLIENT_CLIENT_STATUS_BYTE_LEGACY[]            = "ModbusMasterStatus";
 //const char MODBUS_CLIENT_CLIENT_STATUS_BYTE_VAR_NAME[]          = "Modbus_Client_Status";
 const char MODBUS_CLIENT_CLIENT_STATUS_RESET_BYTE[]             = "ClientStatusReset";
+const char MODBUS_CLIENT_CLIENT_STATUS_RESET_BYTE_LEGACY[]      = "MasterStatusReset";
 //const char MODBUS_CLIENT_CLIENT_STATUS_RESET_BYTE_VAR_NAME[]    = "Client_Status_Reset";
 
 const int MODBUS_CLIENT_CLIENT_STATUS_BYTE_OFFSET               = 100;
@@ -574,8 +589,10 @@ parsing_error parse_modbus_client_config_data(const char* pc8_pi_config_data_p, 
 
             json_object_object_foreachC(json_modbus_client_status, iter)
             {
-                //find the modbus Client status field whos name starts with 'ModbusClientStatus'
-                if(memcmp(MODBUS_CLIENT_CLIENT_STATUS_BYTE, iter.key, (sizeof(MODBUS_CLIENT_CLIENT_STATUS_BYTE) / sizeof(char))-1) == 0)
+                //find the modbus Client status field whos name starts with
+                //'ModbusClientStatus' (or the legacy 'ModbusMasterStatus')
+                if(json_key_starts_with(iter.key, MODBUS_CLIENT_CLIENT_STATUS_BYTE)
+                   || json_key_starts_with(iter.key, MODBUS_CLIENT_CLIENT_STATUS_BYTE_LEGACY))
                 {
                     int32_t success = get_variable_parameters(json_pi_device, json_object_get_string(iter.val), &byte_offset, &bit_offset);
                     //search for variable name in inp and out list of device
@@ -588,7 +605,8 @@ parsing_error parse_modbus_client_config_data(const char* pc8_pi_config_data_p, 
                         print_err(success);
                     }
                 }
-                else if(memcmp(MODBUS_CLIENT_CLIENT_STATUS_RESET_BYTE, iter.key, (sizeof(MODBUS_CLIENT_CLIENT_STATUS_RESET_BYTE) / sizeof(char))-1) == 0)
+                else if(json_key_starts_with(iter.key, MODBUS_CLIENT_CLIENT_STATUS_RESET_BYTE)
+                        || json_key_starts_with(iter.key, MODBUS_CLIENT_CLIENT_STATUS_RESET_BYTE_LEGACY))
                 {
                     int32_t success = get_variable_parameters(json_pi_device, json_object_get_string(iter.val), &byte_offset, &bit_offset);
                     //search for variable name in inp and out list of device
@@ -1167,9 +1185,10 @@ parsing_error parse_modbus_client_action_list(json_object *json_pi_device_p, str
             nextAction->modbusAction.i16uActionID = actionID;
 
             //set server address
-            val_str_buffer = get_modbus_action_matching_name_string_value(
+            val_str_buffer = get_modbus_action_matching_name_string_value_compat(
                     json_modbus_actions,
                 MODBUS_CLIENT_SERVER_ADDRESS_KEY,
+                MODBUS_CLIENT_SERVER_ADDRESS_KEY_LEGACY,
                 action_parameters_identifier);
             if (val_str_buffer == NULL)
             {
@@ -1445,6 +1464,60 @@ const char* get_modbus_action_matching_name_string_value(
     }
     free((void*)action_parameter_prefix_and_identifier);
     return NULL;
+}
+
+
+/*****************************************************************************/
+/** @ brief like get_modbus_action_matching_name_string_value, but falls back
+ *	        to the legacy (master/slave) spelling of the json name (tag) if the
+ *	        current one is not present in the config.rsc
+ *
+ *	@param[in] json_modbus_actions_p
+ *
+ *	@param[in] action_parameter_prefix_p
+ *
+ *	@param[in] action_parameter_legacy_prefix_p
+ *
+ *	@param[in] action_identifier_p
+ *
+ *	@return value as constant character array or NULL if no name matches
+ */
+/*****************************************************************************/
+const char* get_modbus_action_matching_name_string_value_compat(
+        struct json_object *json_modbus_actions_p,
+    const char* action_parameter_prefix_p,
+    const char* action_parameter_legacy_prefix_p,
+    const char* action_identifier_p)
+{
+    const char *value_p = get_modbus_action_matching_name_string_value(
+        json_modbus_actions_p,
+        action_parameter_prefix_p,
+        action_identifier_p);
+
+    if (value_p == NULL)
+    {
+        value_p = get_modbus_action_matching_name_string_value(
+            json_modbus_actions_p,
+            action_parameter_legacy_prefix_p,
+            action_identifier_p);
+    }
+    return value_p;
+}
+
+
+/*****************************************************************************/
+/** @ brief checks if a json name (tag) starts with the given prefix
+ *
+ *	@param[in] json_key_p
+ *
+ *	@param[in] prefix_p
+ *
+ *	@return non zero if the name starts with the prefix
+ */
+/*****************************************************************************/
+static int json_key_starts_with(const char* json_key_p, const char* prefix_p)
+{
+    return strncmp(json_key_p, prefix_p, strlen(prefix_p)) == 0;
 }
 
 

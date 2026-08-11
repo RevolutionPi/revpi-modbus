@@ -92,6 +92,13 @@ Be cycle time.
 
 Further information in document [about configuration and I/O](doc/io.md)
 
+The example below shows the modbus actions in a condensed form. In the config.rsc written by PiCtory
+every parameter is a separate json name (tag) of the form
+`<Parameter>_<ActionNumber>_<PiCtoryDeviceName>`, e.g.
+`SlaveAddress_01_ModbusRTUClient_20260619_1_0`. These names are defined by PiCtory and still use the
+historic master/slave wording, therefore the parser accepts `SlaveAddress` as well as
+`ServerAddress`.
+
 ```json
 {
 
@@ -124,7 +131,7 @@ Further information in document [about configuration and I/O](doc/io.md)
                 # event of an error
             },
             {
-                "ClientAddress" : 1,
+                "ServerAddress" : 1,
                 "FunctionCode" : 3,
                 "RegisterAddress" : 1200,
                 "QuantityOfRegisters" : 8,
@@ -133,7 +140,7 @@ Further information in document [about configuration and I/O](doc/io.md)
                 "Action ID" : 2
             },
             {
-                "ClientAddress" : 2,
+                "ServerAddress" : 2,
                 "FunctionCode" : 16,
                 "RegisterAddress" : 1024,
                 "QuantityOfRegisters" : 8,
