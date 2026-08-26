@@ -1,3 +1,10 @@
+revpi-modbus (2.0.1-1+deb13+1) trixie; urgency=medium
+
+  [ Ramiro Gsponer ]
+  * fix: Accept legacy PiCtory json tags in client parser
+
+ -- Sven Sager <s.sager@kunbus.com>  Wed, 26 Aug 2026 15:10:44 +0200
+
 revpi-modbus (2.0.0-1+deb13+1) trixie; urgency=medium
 
   [ Erik Sallmann ]
