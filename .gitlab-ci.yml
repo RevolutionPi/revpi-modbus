@@ -11,6 +11,8 @@ include:
     file: "/reuse-lint.yml"
   - project: "revolutionpi/infrastructure/ci-templates"
     file: "/check-commit/lint-commit.yml"
+  - project: revolutionpi/infrastructure/ci-templates
+    file: coverity-submit.yml
   - project: "revolutionpi/infrastructure/ci-templates"
     file: "create-pristine-tar.yml"
   - local: debian/gitlab-ci.yml
@@ -41,3 +43,9 @@ static-analysis:
         .
     - cmake --build build
 
+coverity-submit:
+  before_script:
+    - apt update
+    - apt-get build-dep -y revpi-modbus
+    - cmake -Bbuild .
+    - export BUILD_CMD="cmake --build build"
